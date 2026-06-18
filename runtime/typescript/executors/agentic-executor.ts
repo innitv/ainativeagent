@@ -2,6 +2,12 @@ import { existsSync } from "node:fs";
 import { appendFile, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Agent, run } from "@openai/agents";
+import { critiqueAgentOutput } from "../agent-contracts/agent-output-critic";
+import {
+  buildDelegationPacket,
+  renderDelegationPacket,
+  validateDelegationPacket,
+} from "../agent-contracts/delegation-packet";
 import { ensureAgenticArtifactSections } from "../agent-output/artifact-normalizer";
 import {
   hasArtifactOutput,
@@ -70,7 +76,15 @@ export async function executeAgenticStage(context: WorkflowStageExecutorContext)
     return finalizeAgenticStage(context, "blocked", files, inputs, [warning]);
   }
 
-  const prompt = await buildSpecialistPrompt(context, requiredArtifacts, inputs);
+  const delegationPacket = buildDelegationPacket(context, inputs, "approved:model_provider_call");
+  const delegationValidation = validateDelegationPacket(delegationPacket, context.outputDir);
+  if (!delegationValidation.valid) {
+    const warning = `Delegation packet invalid: ${delegationValidation.errors.join("; ")}`;
+    await writeBlockedAgenticArtifacts(context, requiredArtifacts, inputs, warning);
+    return finalizeAgenticStage(context, "blocked", files, inputs, [warning, ...delegationValidation.warnings]);
+  }
+
+  const prompt = await buildSpecialistPrompt(context, requiredArtifacts, inputs, delegationPacket, delegationValidation.warnings);
   const finalOutput = await runSpecialistAndExtractOutput(specialist, prompt, context.stage.id);
 
   if (!finalOutput?.trim()) {
@@ -81,6 +95,13 @@ export async function executeAgenticStage(context: WorkflowStageExecutorContext)
 
   const parsedOutput = parseAgenticOutputEnvelope(finalOutput);
   const warnings: string[] = [...parsedOutput.warnings];
+  const critic = critiqueAgentOutput({
+    envelope: parsedOutput.envelope,
+    expectedAgent: context.stage.owner,
+    requiredArtifacts,
+    requiredInputs: inputs,
+  });
+  warnings.push(...critic.warnings, ...critic.blockers);
   const contractStatus = parsedOutput.envelope
     ? agentOutputStatusToStageStatus(parsedOutput.envelope.status)
     : "partial";
@@ -102,7 +123,9 @@ export async function executeAgenticStage(context: WorkflowStageExecutorContext)
     await writeFile(join(context.outputDir, file), normalized.content, "utf8");
   }
 
-  const status: WorkflowStageStatus = contractStatus === "completed" && warnings.length ? "partial" : contractStatus;
+  const status: WorkflowStageStatus = critic.blockers.length
+    ? "partial"
+    : contractStatus === "completed" && warnings.length ? "partial" : contractStatus;
 
   return finalizeAgenticStage(
     context,
@@ -217,7 +240,10 @@ async function buildSpecialistPrompt(
   context: WorkflowStageExecutorContext,
   requiredArtifacts: readonly string[],
   inputs: string[],
+  delegationPacket = buildDelegationPacket(context, inputs, "approved:model_provider_call"),
+  delegationWarnings: readonly string[] = [],
 ): Promise<string> {
+  const packetWarnings = delegationWarnings.map((warning) => `Delegation packet warning: ${warning}`);
   const inputBlocks = await Promise.all(inputs.map(async (input) => {
     const path = join(context.outputDir, input);
     if (!existsSync(path)) {
@@ -236,6 +262,15 @@ async function buildSpecialistPrompt(
     `Owner: ${context.stage.owner}.`,
     `Execution mode: ${context.executionMode}.`,
     "",
+    "# Delegation Packet",
+    "",
+    "```json",
+    renderDelegationPacket(delegationPacket),
+    "```",
+    "",
+    packetWarnings.length
+      ? ["# Delegation Packet Validation", "", ...packetWarnings.map((warning) => `- ${warning}`), ""].join("\n")
+      : "",
     "Верни результат по agent output contract. Предпочтительный формат: fenced block `agent-output-yaml` или `agent-output-json`.",
     "Внутри `outputs` положи Markdown текущего артефакта по artifact name или file name.",
     `Required output file(s): ${requiredFiles}.`,

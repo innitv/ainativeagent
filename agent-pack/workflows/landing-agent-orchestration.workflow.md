@@ -44,6 +44,8 @@
 
 ## Возможности (Capabilities)
 
+Executable source of truth для capability matrix: `runtime/typescript/agent-capability-registry.ts`. Таблица ниже остается человекочитаемой шпаргалкой; при изменении агента или маршрута сначала обновляй runtime registry/metadata и запускай `yarn workflow:test-agent-capabilities`.
+
 | Этап | Агент | Обязательные артефакты |
 |---|---|---|
 | 00-intake | orchestrator | `run-plan.md`, `handoff-bundle.md`, `stage-gate-ledger.md`, `recursive-brief.md` |

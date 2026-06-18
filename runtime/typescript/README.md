@@ -14,6 +14,8 @@
 - `workflow-stage-executors.ts` — тонкий dispatcher между research, local и approval-gated agentic executor.
 - `executors/` — реализации stage execution: `research-executor.ts`, `local-executor.ts`, `agentic-executor.ts`, Notion export helper и общие executor utilities.
 - `agent-output/` — parser/normalizer structured specialist output, JSON Schema validation по `agent-pack/schemas/agent-output.schema.json` и Markdown artifact fallback.
+- `agent-capability-registry.ts` — executable Agent Capability Registry: role, stages, route tools, inputs/outputs, approval actions, skills и external-write behavior для каждого агента.
+- `agent-contracts/` — executable Delegation Packet Validator и Agent Output Critic для agentic handoff/output gates.
 - `workflow-cli.ts` — command dispatch, intent parsing, approval commands и agentic preflight/readiness formatting.
 - `run-workflow-engine.ts` — тонкий CLI entrypoint и compatibility exports для тестов/скриптов.
 - `agentic-rollout.ts`, `agentic-approval-targets.ts` — staged rollout agentic stages и стабильные approval targets для model provider calls.
@@ -37,10 +39,13 @@
 - Agentic model-provider calls проходят через target-scoped approval gate и включаются только для staged rollout stages.
 - Отсутствующие optional provider keys считаются предупреждением, а не ошибкой проекта.
 - Outputs валидируются по JSON Schema или required Markdown sections перед передачей следующему этапу.
+- Перед model-provider specialist call runtime строит Delegation Packet, проверяет stage id, owner, objective, inputs, allowed outputs, forbidden actions, approval state, quality gate и expected envelope; invalid packet блокирует stage до вызова специалиста.
+- После specialist response Agent Output Critic проверяет structured envelope, agent_name, `inputs_used`, обязательные artifact outputs и статусные условия; blockers понижают stage до `partial`.
 - Research runner обязан использовать весь текущий run ledger как вход: `run-plan.md`, `recursive-brief.md`, `handoff-bundle.md`, `stage-gate-ledger.md`, прошлые research/export/CJM artifacts и `stage-results/*.json`, если они есть. Provider output дополняет этот контекст, но не заменяет его.
 - Research rendering проходит candidate quality/write gate: слабый или generic candidate не должен молча затирать более полный artifact; решение о записи фиксируется в handoff и ledger.
 - Agentic specialist output должен содержать structured envelope и Markdown для обязательного artifact в `outputs.<artifact_name>` или `outputs.<file_name>`; иначе stage понижается до `partial`.
 - Agent instruction frontmatter валидируется как machine-readable contract; artifact inputs/outputs должны совпадать с `routeTools` и stage contract, а перед передачей в Agents SDK frontmatter удаляется из prompt body.
+- Agent Capability Registry собирается из metadata, route tools и stage definitions; `agents.sdk.ts` использует его descriptions для tool handoff descriptions.
 - Sensitive inputs/outputs не сохраняются в traces для production-like запусков.
 
 ## Команды
@@ -66,6 +71,8 @@ yarn workflow:archive outputs/<project-slug>/<YYYY-MM-DD>
 yarn workflow:archive outputs/<project-slug>/<YYYY-MM-DD> --force
 yarn workflow:run-stage outputs/<project-slug>/<YYYY-MM-DD> 01-research --force
 yarn workflow:agentic-stages
+yarn workflow:test-agent-capabilities
+yarn workflow:test-agent-contracts
 yarn workflow:agentic-preflight outputs/<project-slug>/<YYYY-MM-DD> --strict
 yarn workflow:agentic-approval-commands outputs/<project-slug>/<YYYY-MM-DD> --by human --missing-only
 yarn workflow:agentic-readiness outputs/<project-slug>/<YYYY-MM-DD> --strict

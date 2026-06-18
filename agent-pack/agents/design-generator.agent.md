@@ -61,6 +61,21 @@ contract_schema: agent-pack/schemas/agent-output.schema.json
    - write plan не пытается вписать всю доску в один frame, если удобнее создать отдельные frames на canvas.
 15. Запись в Figma выполняется через `use_figma` маленькими проверяемыми шагами: inspect -> create/update variables/components/frames -> screenshot -> visual polish -> update `figma-handoff-bundle.md`.
 
+## Wireframe Canvas Rule (Правило Figma-варфреймов)
+
+Если surface mode = `figma_wireframe` или пользователь использует слова `wireframe`, `wireframes`, `вайрфрейм`, `варфрейм`, `Warframe`, агент не имеет права переходить в “облегчённый набросок”. Для wireframes действует тот же canvas/process contract, что и для макетов:
+
+1. inspect existing Figma file/design system;
+2. create/reuse variables/tokens and styles;
+3. create/reuse reusable components;
+4. create component sets/variants and explicit states;
+5. model slots/properties where component content changes by screen;
+6. assemble screens from instances/reusable patterns with Auto Layout;
+7. run metadata/object inventory and screenshot verification;
+8. record deviations if any part is skipped.
+
+Wireframe может быть low-fi по визуальной детализации, но не может быть low-quality по структуре. Нельзя подменять components/instances набором одноразовых rectangles/text под предлогом “это только варфрейм”.
+
 ## Screen-To-Canvas Order (Порядок От Экранов К Canvas)
 
 1. `design-generator-prompt.md`
@@ -82,6 +97,7 @@ contract_schema: agent-pack/schemas/agent-output.schema.json
 - `screens.md` не может быть `ready`, если отсутствует Visual Evidence Grounding для визуальной или интерактивной поверхности.
 - `screens.md` не может быть `ready` для Figma/frontend handoff, если отсутствует Source Pair Plan с required/evidence/owner по обязательным парам.
 - Для Figma-ready задач обязательно описывать Auto Layout intent, variables/styles/components, component sets/variants и canvas strategy.
+- Для Figma-ready wireframes требования те же, что для макетов: tokens/styles, reusable components, component sets/variants, states, slots/properties, Auto Layout и verification обязательны; low-fi снижает только визуальный polish.
 - Если дизайн-система доступна, сначала reuse tokens/components; новые компоненты допускаются только с reason and gap.
 - Если Figma недоступна, текстовые спецификации экранов в `screens.md` являются полноценным резервным вариантом (fallback).
 - **Правило Figma-макетов**: Отрисовывать макеты на холсте Figma через Figma MCP *только* при явном запросе пользователя, включенном параметре `write_allowed=true` и получении явного согласия пользователя. Не использовать устаревшую модель `create_node`/`update_node`, если в текущей среде доступен официальный remote tool `use_figma`. Перед write нужно показать пользователю scope и target, а после write снять screenshot и исправить очевидные визуальные пересечения.
@@ -89,8 +105,10 @@ contract_schema: agent-pack/schemas/agent-output.schema.json
 ## Trigger Phrases / Триггерные фразы
 
 Этот агент активируется и генерирует спецификацию экранов по следующим фразам:
-- **Генерация экранов**: `сгенерируй спецификацию экранов`, `создай экраны`, `опиши экраны`, `generate screens`, `create screens spec`.
-- **Обновление экранов**: `обнови спецификацию экранов`, `обнови экраны`, `update screens`.
+- **Генерация экранов**: `сгенерируй спецификацию экранов`, `создай экраны`, `опиши экраны`, `экран`, `экраны`, `screen`, `screens`, `generate screens`, `create screens spec`.
+- **Figma / макеты / wireframes**: `Figma`, `фигма`, `макет`, `макеты`, `wireframe`, `wireframes`, `вайрфрейм`, `варфрейм`, `Warframe`, `low-fi`, `hi-fi`, `visual handoff`, `canvas`, `FigJam`, `сделай в фигме`, `перенеси в фигму`. Для этих запросов агент обязан описать/проверить component inventory, Auto Layout intent, variables/styles/components, states и screenshot/object verification plan.
+- **Дизайн-система и компоненты на экранах**: `дизайн-система`, `components`, `компоненты`, `component set`, `variants`, `варианты`, `states`, `Auto Layout`, `автолайаут`, `styles`, `tokens`.
+- **Обновление экранов**: `обнови спецификацию экранов`, `обнови экраны`, `update screens`, `переделай макеты`, `примени дизайн-систему`, `приведи макеты к компонентам`.
 
 ## Required Outputs (Обязательные результаты)
 

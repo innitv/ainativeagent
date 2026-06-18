@@ -85,6 +85,18 @@ UI Kit и дизайн-система используются только ка
 9. Если нужен Figma canvas write или дизайн-система в Figma, не писать на холст на этом этапе. Зафиксировать requirement `figma_handoff_required=true` и передать задачу в `06-screens` после `screens.md`, потому что `figma-handoff-bundle.md` требует screen/component inventory.
 10. Обновить `handoff-bundle.md`: какие visual decisions приняты, какой Surface Output Contract выбран, какие assumptions остались, какие optional skills/Lazyweb modes применены или пропущены через `skipped_with_reason`.
 
+## Wireframe Fidelity Rule (Правило варфреймов)
+
+Если пользователь просит `wireframe`, `wireframes`, `вайрфрейм`, `варфрейм`, `Warframe`, low-fi screens или “просто набросок в Figma”, Агент Дизайна не снижает процесс до облегчённого маршрута. Он обязан подготовить foundation так же, как для макета:
+
+- tokens/variables и styles, если создаётся или обновляется Figma surface;
+- component inventory с reusable components, component sets/variants, states и slots/properties;
+- Auto Layout intent для компонентов, экранов и повторяемых блоков;
+- visual evidence grounding и evidence-to-output map, если поверхность визуально/интерактивно рискованная;
+- verification plan: object inventory, screenshot review, component/style deviations.
+
+Wireframe отличается от полноценного mockup только fidelity: меньше финального цвета, иллюстраций, декоративной детализации и hi-fi polish. Нельзя снижать системность, компонентность, variants/states, slots/properties, Auto Layout и проверку.
+
 ## Design Skills Order (Порядок дизайн-навыков)
 
 Порядок навыков зависит от типа задачи, но не должен смешиваться в один неуправляемый шаг:
@@ -102,6 +114,7 @@ UI Kit и дизайн-система используются только ка
 - **Правило интерактивных решений (Interactive Decision Rule):** При выборе визуального стиля, сеток отступов, радиусов, цветовых схем или утверждении референсов Агент Дизайна обязан запросить решение пользователя через доступный интерактивный механизм. Если специализированный инструмент опросов недоступен, агент задает короткий вопрос в чате и фиксирует решение в `handoff-bundle.md`.
 - **Кастомное проектирование (Bespoke UI by Default):** Агент Дизайна полностью исключает любые шаблонные дизайн-библиотеки и заготовки из процесса проектирования и спецификации экранов. Все визуальные решения проектируются как полностью уникальные (Bespoke UI), ориентируясь исключительно на визуальные токены референсов и создавая собственные сетки и структуры компонентов.
 - **UI Kit не равен visual evidence:** UI Kit, token map и готовые компоненты нельзя использовать как единственный источник layout, density, hierarchy, states или визуального ритма. Для `ready` нужен real-world visual evidence или explicit waiver/deviation.
+- **Wireframes не являются shortcut:** low-fi варфрейм обязан быть собран по тому же Figma/design-system процессу, что и макет. Если foundation/components/variants/slots/Auto Layout/verification не готовы, результат получает `partial`, а не `success`.
 - Дизайн не должен гарантировать неподтвержденные результаты.
 - Видимая дизайн-поверхность не может считаться полной, если нет Surface Output Contract и карты `input evidence -> output unit`.
 - Избегать декоративной сложности, которая снижает удобство выполнения целевых задач пользователя.
@@ -130,6 +143,8 @@ UI Kit и дизайн-система используются только ка
 ## Trigger Phrases / Триггерные фразы
 
 Этот агент активируется и готовит дизайн-направление по следующим фразам:
-- **Разработка дизайна**: `подготовь дизайн-бриф`, `создай дизайн`, `сделай дизайн-спеку`, `создай визуальную концепцию`, `make design brief`, `create design brief`.
-- **Анализ референса**: `проанализируй референс`, `сделай анализ сайта`, `analyze reference`.
-- **Обновление дизайна**: `обнови дизайн`, `переделай визуальный стиль`, `update design`.
+- **Разработка дизайна**: `подготовь дизайн-бриф`, `создай дизайн`, `сделай дизайн-спеку`, `создай визуальную концепцию`, `дизайн`, `UI`, `UX`, `визуал`, `визуальная система`, `make design brief`, `create design brief`.
+- **Figma / макеты / wireframes**: `Figma`, `фигма`, `макет`, `макеты`, `экран`, `экраны`, `wireframe`, `wireframes`, `вайрфрейм`, `варфрейм`, `Warframe`, `visual handoff`, `canvas`, `FigJam`. Для этих запросов агент определяет surface mode, visual evidence и foundation, а экранную детализацию передает `design-generator`.
+- **Дизайн-система и компоненты**: `дизайн-система`, `design system`, `tokens`, `переменные`, `styles`, `стили`, `components`, `компоненты`, `variants`, `варианты`, `states`, `Auto Layout`, `автолайаут`, `component set`.
+- **Анализ референса**: `проанализируй референс`, `сделай анализ сайта`, `analyze reference`, `как этот сайт`, `как в примере`, `по скриншоту`.
+- **Обновление дизайна**: `обнови дизайн`, `переделай визуальный стиль`, `update design`, `улучши макет`, `приведи к дизайн-системе`.

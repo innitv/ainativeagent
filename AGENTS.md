@@ -12,6 +12,7 @@
 - `limited engineering task`: узкая правка кода, документации, runtime или rules; можно использовать task-scoped ExecPlan вместо полного product workflow.
 - `cleanup/sorting`: очистка `outputs/temp`, `outputs/products`, `research/temp`, архивов или грязного дерева; не смешивать с feature work.
 - `external write`: Notion, Figma, deploy, изменение секретов, удаление данных и git write без текущего явного запроса требуют exact approval. Model-provider calls требуют approval, кроме явно включенных non-blocking DeepSeek/Gemini advisory checks на `01-research`, описанных в разделе Research.
+- `figma surface`: любой запрос на Figma-макеты, `wireframes`/`варфреймы`/`Warframe`, экраны, UI flow, visual handoff или дизайн-систему обязан идти через Figma Surface Mode Gate из раздела 7. Wireframes не являются облегчённым маршрутом: они проходят тот же design/design-generator/Figma process, что и макеты, включая tokens, styles, components, component sets/variants, slots/properties, Auto Layout и verification. Отличается только визуальная fidelity: wireframe остаётся low-fi, но системность не снижается.
 - `siteportfolio update`: правки личного сайта-портфолио пользователя. Триггеры: `мой сайт`, `мой сайт портфолио`, `портфолио`, `portfolio`, `siteportfolio`, `персональный сайт`, `сайт Ивана`, `/portfolio`. Это отдельный продуктовый каталог `siteportfolio/`, а не обычный `outputs` run; по умолчанию читать `siteportfolio/README.md` и `siteportfolio/runs/2026-06-14/handoff-bundle.md`.
 
 Для selective commit/push используй `agent-pack/templates/selective-commit-sop.md`: сначала выписать include/exclude scope, staged делать только явными путями, затем выполнить `yarn git:check-staged` и проверить `git diff --cached --name-only`. `outputs/**`, `research/projects/**`, `research/archive/**`, `siteportfolio/runs/**`, `.lazyweb/**`, logs, build artifacts и media/evidence файлы запрещены в selective commit без прямого разрешения пользователя.
@@ -60,6 +61,29 @@ Codex работает как инженерно-продуктовый аген
 - Лучшие практики внешних агентных систем адаптированы в `agent-pack/workflows/agent-ops-best-practices.md`; используй их как вспомогательный слой, но не как замену текущему pipeline.
 
 Субагенты описаны в `agent-pack/agents/*.agent.md`. Route/dependency graph описан в `runtime/typescript/route.config.ts` и `runtime/typescript/workflow-stages.ts`.
+
+### Agent Trigger Matrix
+
+Оркестратор обязан распознавать не только формальные названия этапов, но и бытовые формулировки пользователя. Если фраза пользователя содержит один из триггеров ниже, это считается сигналом на specialist route даже в режиме ограниченной задачи:
+
+| Триггеры пользователя | Обязательный specialist route | Минимальный результат |
+|---|---|---|
+| `ресёрч`, `исследование`, `deep research`, `рынок`, `конкуренты`, `CJM`, `customer journey`, `user flow`, `сценарии`, `персоны`, `интервью`, `SWOT` | `research` | research pack или research-scoped partial с источниками/пробелами |
+| `PRD`, `требования`, `scope`, `MoSCoW`, `acceptance criteria`, `метрики`, `аналитика` | `prd` | `prd.md` или task-scoped PRD section |
+| `IA`, `информационная архитектура`, `sitemap`, `структура`, `навигация`, `главный сценарий`, `primary flow` | `ia` | `ia-brief.md` или IA section |
+| `дизайн`, `UI`, `UX`, `визуал`, `референс`, `style`, `дизайн-бриф`, `дизайн-система`, `tokens`, `styles`, `components`, `variants`, `Auto Layout`, `автолайаут`, `компоненты` | `design` | visual direction, evidence plan, component/foundation decision |
+| `макет`, `макеты`, `экран`, `экраны`, `wireframe`, `wireframes`, `вайрфрейм`, `варфрейм`, `Warframe`, `Figma`, `фигма`, `FigJam`, `canvas`, `visual handoff` | `design-generator`; для Figma surface также `design` перед ним | `screens.md`/Figma-ready spec, component inventory, Auto Layout intent, verification plan |
+| `тексты`, `копирайт`, `CTA`, `микрокопи`, `лейблы`, `ошибки`, `empty state`, `claims`, `FAQ`, `SEO` | `copywriting` | `copy-deck.md` или copy section |
+| `прототип`, `кликабельный`, `переходы`, `prototype`, `transition map` | `prototype` | `prototype-report.md` или transition map |
+| `сверстай`, `frontend`, `React`, `route`, `страница`, `лендинг`, `реализация`, `UI в коде` | `frontend` после upstream gates | `frontend-result.md` и проверка |
+| `проверь`, `QA`, `visual diff`, `a11y`, `responsive`, `регрессия`, `релиз` | `qa-review`/`test-bench`/`release` по стадии | QA/test/release artifact |
+
+Для Figma/design-triggered задач действует отдельное усиление:
+
+- Оркестратор может выполнять локальные инструменты и Figma MCP write только после явного specialist pass через `design`/`design-generator` или после записи `skipped_with_reason` в task ExecPlan/run ledger.
+- Даже если пользователь говорит «просто wireframe/варфрейм/набросок», это не отменяет specialist route и не включает упрощённый процесс. Wireframe использует тот же агентный Figma/design-system маршрут, что и макет: tokens/styles, компоненты, variants/states, slots/properties, Auto Layout intent, copy binding и verification обязательны. Меняется только уровень визуальной детализации: low-fi вместо hi-fi.
+- Если запрос одновременно содержит тексты и макеты, `copywriting` должен быть подключен до финальной генерации экранов или видимой Figma-поверхности.
+- Если specialist route пропущен из-за недоступности агента/инструмента/approval, финальный статус результата — `partial`, а не `success`.
 
 ## 3. Рабочий режим
 
@@ -245,6 +269,16 @@ Notion research publication обязательна для полного workflo
 ## 7. Visual Reference и Figma
 
 Если пользователь дал screenshot, URL референса или просит «как этот сайт», задача считается reference-driven.
+
+### Figma Surface Mode Gate
+
+Любой запрос на создание или обновление Figma-поверхности сначала классифицируется по уровню строгости. Это правило действует даже если пользователь говорит `wireframes`, `варфреймы`, `Warframe`, «быстрые экраны», «набросок в Figma» или «просто макеты».
+
+- `figma_wireframe`: low-fi макет для проверки сценария. Wireframe — это не облегчённый процесс и не permission на ручную россыпь блоков. Обязательны те же системные шаги, что для макета: Figma/design-agent route, foundations, variables/tokens, text/paint/effect styles по необходимости, reusable components, component sets/variants, slots/properties, states, Auto Layout на компонентах и экранах, понятные layer names, copy из `copy-deck.md` или screen spec, object inventory и screenshot verification. Разрешено снижать только визуальную fidelity/polish: меньше финального цвета, иллюстраций и декоративной детализации; запрещено снижать качество структуры, компонентности, variants/states и проверки.
+- `figma_design_mockup`: полноценный дизайн-макет. Обязательны: foundations, variables/styles, components, variants, states, Auto Layout на экранах и компонентах, reusable patterns, visual evidence grounding, component/library grounding, `figma-handoff-bundle.md`, screenshot/object-inventory verification и фиксация deviations.
+- `figma_board`: исследовательская/CJM/strategy доска. Можно использовать более свободную canvas-композицию, но информационные карточки, таблицы, swimlanes и repeated blocks должны быть структурированы как reusable patterns с Auto Layout там, где есть повторяемые элементы.
+
+Если агент создаёт Figma surface без выбранного режима, без Auto Layout/component/style inventory или без явного deviation record, результат получает `partial`, даже если файл визуально создан. Для wireframes правильная планка — “low-fi визуально, но тот же production-grade Figma process”; для design mockups — тот же process плюс более высокий уровень визуального polish.
 
 Обязательный порядок:
 

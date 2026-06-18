@@ -69,7 +69,30 @@ contract_schema: agent-pack/schemas/agent-output.schema.json
 | `limited engineering task` | task-scoped ExecPlan | узкий scope, локальные проверки, без полного product pipeline |
 | `cleanup/sorting` | cleanup commands / staging plan | не смешивать с feature work; не удалять без явного target |
 | `external write` | approval-gated action | exact target, dry-run/preview, publication/deploy/commit record |
+| `figma surface` | `design` -> `copywriting` при видимых текстах -> `design-generator` -> approval-gated Figma write | Figma Surface Mode Gate, Delegation Packet, tokens/styles/components/variants/slots, Auto Layout inventory, screenshot/object verification |
 | `siteportfolio update` | targeted product update для `/portfolio` | читать `siteportfolio/README.md`, не создавать новый `outputs` run без явного запроса |
+
+## Agent Trigger Matrix (Матрица триггеров специалистов)
+
+Оркестратор не должен ждать, пока пользователь назовет агента явно. Бытовые слова пользователя считаются достаточным сигналом на specialist route:
+
+| User intent / trigger words | Specialist route |
+|---|---|
+| `ресёрч`, `исследование`, `рынок`, `конкуренты`, `CJM`, `customer journey`, `user flow`, `персоны`, `интервью`, `SWOT` | `research` |
+| `PRD`, `требования`, `scope`, `MoSCoW`, `acceptance criteria`, `метрики` | `prd` |
+| `IA`, `sitemap`, `структура`, `навигация`, `главный сценарий`, `primary flow` | `ia` |
+| `дизайн`, `UI`, `UX`, `визуал`, `референс`, `дизайн-система`, `tokens`, `styles`, `components`, `variants`, `Auto Layout`, `автолайаут`, `компоненты` | `design` |
+| `макет`, `макеты`, `экран`, `экраны`, `wireframe`, `wireframes`, `вайрфрейм`, `варфрейм`, `Warframe`, `Figma`, `фигма`, `FigJam`, `canvas`, `visual handoff` | `design` -> `design-generator`; если есть видимый copy, вставить `copywriting` перед `design-generator` |
+| `тексты`, `копирайт`, `CTA`, `микрокопи`, `лейблы`, `ошибки`, `empty state`, `FAQ`, `SEO` | `copywriting` |
+| `прототип`, `кликабельный`, `переходы`, `transition map` | `prototype` |
+| `frontend`, `React`, `сверстай`, `страница`, `лендинг`, `реализация` | `frontend` после upstream gates |
+| `проверь`, `QA`, `visual diff`, `a11y`, `responsive`, `регрессия`, `релиз` | `qa-review`, `test-bench` или `release` по стадии |
+
+Если запрос содержит Figma/design triggers, Оркестратор обязан записать выбранный `specialist_route` в `run-plan.md` или task-scoped ExecPlan до write/generation. Прямое создание Figma-макетов Оркестратором без `design`/`design-generator` pass допустимо только как явно зафиксированный `partial`/`deviation` с причиной.
+
+### Wireframe Fidelity Rule
+
+`wireframe`, `wireframes`, `вайрфрейм`, `варфрейм` и `Warframe` не означают облегчённый процесс. Оркестратор обязан маршрутизировать wireframes так же, как Figma-макеты: через `design` -> `design-generator` -> approval-gated Figma write при необходимости, с tokens/styles, компонентами, variants/states, slots/properties, Auto Layout и verification. Разница только в визуальной fidelity: wireframe может быть low-fi и менее декоративным, но не может быть несистемным, одноразовым или собранным без component/design-system discipline.
 
 ## Delegation Packet Contract
 
@@ -87,6 +110,10 @@ contract_schema: agent-pack/schemas/agent-output.schema.json
 - `handoff_consumer`: следующий агент и что ему понадобится.
 
 Если packet неполный, Оркестратор не должен запускать специалиста.
+
+Runtime обязан применять executable Delegation Packet Validator перед specialist call и Agent Output Critic после ответа. Validator блокирует stage при пустом objective, inputs, allowed outputs, approval state, quality gate или expected envelope. Critic проверяет `agent_name`, `inputs_used`, обязательный `outputs.<artifact>`/`outputs.<file>`, статус `success|partial|blocked` и переводит результат в `partial`, если контракт нарушен.
+
+Agent Capability Registry (`runtime/typescript/agent-capability-registry.ts`) — справочник того, что каждый агент умеет делать: role, stages, route tools, inputs, outputs, approvals, skills и external-write behavior. Оркестратор сверяется с ним при выборе specialist capability; расхождение registry, frontmatter и route definitions является ошибкой runtime contract.
 
 ## Consensus & Conflict Handling
 
@@ -131,6 +158,7 @@ contract_schema: agent-pack/schemas/agent-output.schema.json
 - **Surface-Aware Output Rule:** Любой результат, который пользователь будет читать, смотреть, проверять или использовать как интерфейс/доску/страницу/прототип/реализацию, требует Surface Output Contract до write/generation и Reality Check после write/generation. Запрещено подменять full board/interactive UI/pipeline artifact краткой summary-выжимкой без explicit scope.
 - **No Silent Downstream Drift:** Если поздний агент меняет продуктовую трактовку, визуальный стиль, scope или claims, Оркестратор обязан вернуть изменение на соответствующий upstream stage или зафиксировать approved deviation.
 - **Дизайн-система с нуля:** При старте проектирования и генерации ДС с нуля Оркестратор направляет субагентов строго по регламенту `agent-pack/workflows/ds-baseline.workflow.md`. `outputs/registry.json` можно использовать только как навигационный индекс активных продуктов, а не как источник правил workflow.
+- **Wireframes без облегчённого маршрута:** Если пользователь просит wireframes/варфреймы, Оркестратор не снижает процесс до ручного наброска. Он требует тот же specialist route, component library discipline, variants/states, slots/properties, Auto Layout и screenshot/object verification, что и для макетов; low-fi относится только к визуальному polish.
 - Если предыдущий запуск нарушил пайплайн, восстановить недостающие артефакты и зафиксировать нарушение в `run-plan.md`.
 - **Правила рекурсивного брифинга**:
   - Никогда не вываливать на пользователя длинные, пугающие списки вопросов. Задавать их строго порциями по 4-5 штук.

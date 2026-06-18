@@ -2,6 +2,7 @@ import * as React from "react";
 import { ComponentsPlayground } from "./components-playground";
 import { LandingView } from "./views/LandingView";
 import { ConsoleView } from "./views/ConsoleView";
+import { A3PayDemo } from "./views/a3pay-demo";
 import { PortfolioView } from "@siteportfolio/PortfolioView";
 
 export function App() {
@@ -11,6 +12,10 @@ export function App() {
 
   if (window.location.pathname.startsWith("/portfolio")) {
     return <PortfolioView />;
+  }
+
+  if (window.location.pathname.startsWith("/a3pay-demo")) {
+    return <A3PayDemo />;
   }
 
   const [view, setView] = React.useState<"landing" | "console">(() => {

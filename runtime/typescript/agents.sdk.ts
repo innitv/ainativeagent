@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { Agent, run } from "@openai/agents";
+import { agentCapabilityDescriptions } from "./agent-capability-registry";
 import { agentInstructionFiles, agentNames } from "./agents.registry";
 import { parseAgentInstructionDocument } from "./agent-metadata";
 import { getRoutePlanForProfile, routeTools, type RouteProfile } from "./route.config";
@@ -17,21 +18,6 @@ export interface AgentsSdkLayer {
 export interface StandaloneRunResult {
   finalOutput: unknown;
 }
-
-const specialistDescriptions: Partial<Record<AgentRegistryKey, string>> = {
-  research: "Prepare source-backed research findings, unknowns and claims to validate.",
-  prd: "Create a PRD with goals, scope, requirements, MoSCoW and acceptance criteria.",
-  notionPublisher: "Prepare or publish a Notion-ready PRD export when approval is present.",
-  ia: "Create information architecture, sitemap and primary user flow.",
-  design: "Create UX/UI design brief, sections, components, responsive and accessibility notes.",
-  designGenerator: "Generate screen specifications from IA, design direction and copy.",
-  prototype: "Create prototype transition map and manual clickable prototype instructions.",
-  copywriting: "Create landing copy deck, CTA text, FAQ, SEO and claims to validate.",
-  frontend: "Implement or specify frontend delivery from PRD, IA, screens, copy and prototype.",
-  testBench: "Create funnel analytics checks and test bench result.",
-  qaReview: "Review PRD fit, UX, accessibility, responsive behavior, secrets and checks.",
-  release: "Create release notes with changed files, validation, deployment and rollback notes.",
-};
 
 export async function loadAgentInstructions(): Promise<Record<AgentRegistryKey, string>> {
   const entries = await Promise.all(
@@ -69,7 +55,7 @@ export function createSpecialistAgents(
     specialists[key] = new Agent({
       name: agentNames[key],
       instructions: instruction,
-      handoffDescription: specialistDescriptions[key] ?? `${agentNames[key]} specialist.`,
+      handoffDescription: agentCapabilityDescriptions[key],
     });
   }
 
@@ -102,7 +88,7 @@ export function createOrchestratorAgent(
 
     return [specialist.asTool({
       toolName: route.tool,
-      toolDescription: `${specialistDescriptions[specialistKey] ?? route.agent} Inputs: ${route.inputs.join(", ")}. Outputs: ${outputs.join(", ")}.`,
+      toolDescription: `${agentCapabilityDescriptions[specialistKey]} Inputs: ${route.inputs.join(", ")}. Outputs: ${outputs.join(", ")}.`,
     })];
   });
 

@@ -50,6 +50,7 @@ recommended_next_step: <рекомендуемый_следующий_шаг>
 - `evidence_to_output_map` должен связывать evidence с конкретным решением и местом в output. Простое перечисление источников в `inputs_used` не считается применением evidence.
 - `verification` должен содержать реальную проверку результата: metadata/object inventory/screenshot/build/test/browser evidence или явный blocker.
 - Если stage создаёт Markdown-файл, значение `outputs.<artifact>` должно быть полным Markdown-содержимым целевого файла, включая обязательные секции из `workflow-stages.ts`.
+- Agent Output Critic в runtime проверяет этот контракт после ответа специалиста: `agent_name`, `inputs_used`, обязательный artifact output, status semantics и полноту Markdown. Если critic находит blocker, stage не может остаться `success`.
 - `status: success` запрещён, если отсутствует хотя бы один обязательный artifact key текущего stage. В таком случае возвращай `partial` с warning/risk или `blocked`, если без артефакта нельзя продолжать.
 - Статус `partial` (частичный успех) допустим только при наличии заполненных полей `risks` и/или `open_questions`.
 - Статус `blocked` (заблокирован) требует указания конкретного блокирующего фактора (`blocker`) и следующего необходимого действия (`next required action`).

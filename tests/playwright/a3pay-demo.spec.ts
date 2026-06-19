@@ -20,6 +20,7 @@ test("client can complete the A3Pay push payment flow", async ({ page }) => {
 test("client uses native-style iOS navigation between payment steps", async ({ page }) => {
   await page.goto(`/a3pay-demo/pay/${orderId}`);
 
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#ffffff");
   await expect(page.locator(".a3pay-ios-statusbar")).toHaveCount(0);
   await expect(page.locator(".a3pay-ios-navbar").getByText("A3Pay")).toBeVisible();
   await expect(page.getByRole("button", { name: "Назад" })).toHaveCount(0);
@@ -85,6 +86,12 @@ test("merchant follows payment statuses and opens the registry", async ({ page }
   await page.getByRole("button", { name: /Создать запрос на оплату/ }).click();
   await expect(page.getByRole("heading", { name: `Платёж ${orderId}` })).toBeVisible();
   await expect(page.getByText("Push отправлен клиенту")).toBeVisible({ timeout: 3_000 });
+  await expect(page.getByRole("heading", { name: "История статусов по заказу" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Создать новый заказ" })).toBeVisible();
+
+  const statusCard = await page.locator(".a3pay-merchant-status-card").boundingBox();
+  const timelineCard = await page.locator(".a3pay-timeline-card").boundingBox();
+  expect(Math.abs((statusCard?.width ?? 0) - (timelineCard?.width ?? 0))).toBeLessThanOrEqual(2);
 
   const statusSwitcher = page.getByLabel("Переключить статус платежа");
   await statusSwitcher.getByRole("button", { name: "Клиент не найден" }).click();
@@ -94,8 +101,16 @@ test("merchant follows payment statuses and opens the registry", async ({ page }
   await expect(page.getByText("Ozon Bank подтвердил списание. Мерчант может выдать товар/услугу.")).toBeVisible();
 
   await page.getByRole("button", { name: "Реестр платежей" }).click();
-  await expect(page.getByRole("heading", { name: "Операции A3Pay" })).toBeVisible();
-  await page.getByRole("button", { name: "Открыть" }).first().click();
+  await expect(page.getByRole("heading", { name: "Реестр платежей" })).toBeVisible();
+  await expect(page.getByText("248 900 ₽")).toBeVisible();
+  await expect(page.getByText("43 сек")).toBeVisible();
+  await expect(page.locator(".a3pay-table-row")).toHaveCount(5);
+  const paymentRow = page.locator('.a3pay-table-row[data-actionable="true"]').first();
+  if ((page.viewportSize()?.width ?? 0) < 700) {
+    await paymentRow.evaluate((element: HTMLElement) => element.click());
+  } else {
+    await paymentRow.click({ position: { x: 40, y: 25 } });
+  }
   await expect(page.getByRole("heading", { name: `Платёж ${orderId}` })).toBeVisible();
 });
 

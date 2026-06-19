@@ -1,0 +1,15 @@
+{
+  "project_slug": "a3pay-ozon-bank-mvp",
+  "run_date": "2026-06-18",
+  "run_id": "a3pay-ozon-bank-mvp-2026-06-18",
+  "created_at": "2026-06-18T12:00:00.000Z",
+  "updated_at": "2026-06-18T13:57:04.370Z",
+  "workflow_profile": "research-only",
+  "execution_mode": "local",
+  "status": "pending",
+  "source_request": "Определить MVP A3Pay с оплатой через Ozon Банк и workflows покупателя и мерчанта",
+  "output_dir": "C:\\Project\\product-agent-studio\\research\\projects\\a3pay-ozon-bank-mvp\\2026-06-18",
+  "has_reference": false,
+  "notion_publication": "unknown",
+  "last_validated_at": "2026-06-18T12:25:21.067Z"
+}

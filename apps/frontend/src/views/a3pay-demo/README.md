@@ -1,11 +1,11 @@
-# A3Pay demo-MVP frontend
+# A3Pay MVP frontend
 
-Эта папка — единая точка разработки демо A3Pay × Ozon Bank.
+Эта папка — единая точка разработки клиентской и мерчантской веток A3Pay × Ozon Bank.
 
 ## Что здесь лежит
 
-- `A3PayDemo.tsx` — клиентский mobile-flow, мерчантский web-flow и demo hub.
-- `a3pay-demo.css` — изолированные стили демо.
+- `A3PayDemo.tsx` — клиентский mobile-flow и мерчантский web-flow из Figma.
+- `a3pay-demo.css` — изолированные стили продукта.
 - `mock-api.ts` — dev-only Vite middleware для мокового payment API.
 - `index.ts` — публичные экспорты для `App.tsx` и `vite.config.ts`.
 
@@ -15,17 +15,17 @@
 - `apps/frontend/vite.config.ts` только подключает `a3payDemoMockApi()`.
 - `tests/playwright/a3pay-demo.spec.ts` проверяет пользовательские сценарии, но лежит в общем каталоге Playwright-тестов проекта.
 
-## Ветки демо
+## Ветки продукта
 
-- `/a3pay-demo` — hub со ссылками на две ветки.
-- `/a3pay-demo/pay/pay_91A0EF` — `A3Pay Demo MVP`, клиентская mobile-ветка из Figma v4.
-- `/a3pay-demo/merchant/orders/pay_91A0EF` — `A3Pay Demo MVP Merchant`, web-ветка мерчанта из Figma v4.
+- `/a3pay-demo` — клиентская ветка по умолчанию.
+- `/a3pay-demo/pay/pay_91A0EF` — `A3Pay MVP`, клиентская mobile-ветка из Figma.
+- `/a3pay-demo/merchant/orders/pay_91A0EF` — `A3Pay MVP Merchant`, web-ветка мерчанта из Figma.
 
 ## Публичные ссылки после Vercel deploy
 
-После деплоя на Vercel корневой preview URL автоматически перенаправляет на hub демо. Если нужно дать точные ссылки, замени домен на домен проекта:
+После деплоя на Vercel корневой preview URL автоматически перенаправляет на клиентскую ветку. Если нужно дать точные ссылки, замени домен на домен проекта:
 
-- `https://<vercel-domain>/a3pay-demo` — hub для демонстрации двух ролей.
+- `https://<vercel-domain>/a3pay-demo` — клиентская ветка.
 - `https://<vercel-domain>/a3pay-demo/pay/pay_91A0EF` — ссылка для клиента.
 - `https://<vercel-domain>/a3pay-demo/merchant/orders/pay_91A0EF` — ссылка для мерчанта.
 

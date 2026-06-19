@@ -21,10 +21,10 @@ test("merchant can see the client-not-found state", async ({ page }) => {
   await page.goto(`/a3pay-demo/merchant/orders/${orderId}`);
 
   await page.getByLabel("Телефон клиента").fill("+7 903 000-00-02");
-  await page.getByRole("button", { name: "Отправить push" }).click();
+  await page.getByRole("button", { name: /Создать запрос на оплату/ }).click();
 
   await expect(page.getByText("Клиент не найден").first()).toBeVisible({ timeout: 3_000 });
-  await expect(page.getByText("Номер не связан с активным Ozon Bank.")).toBeVisible();
+  await expect(page.getByText("Номер не связан с активным Ozon Bank.").first()).toBeVisible();
 });
 
 test("merchant and client routes share the same demo order state", async ({ context, page }) => {
@@ -34,7 +34,7 @@ test("merchant and client routes share the same demo order state", async ({ cont
   await merchant.goto(`/a3pay-demo/merchant/orders/${orderId}`);
   await client.goto(`/a3pay-demo/pay/${orderId}`);
 
-  await merchant.getByRole("button", { name: "Отправить push" }).click();
+  await merchant.getByRole("button", { name: /Создать запрос на оплату/ }).click();
 
   await expect(client.locator(".a3pay-bank-push")).toBeVisible({ timeout: 4_000 });
   await client.locator(".a3pay-bank-push").click();

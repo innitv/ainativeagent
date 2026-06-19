@@ -3,12 +3,9 @@ import {
   Bell,
   Check,
   CheckCircle2,
-  Clock3,
   Copy,
   ExternalLink,
   Loader2,
-  RefreshCw,
-  RotateCcw,
   Search,
   Send,
   ShieldCheck,
@@ -50,7 +47,7 @@ type DemoPayment = {
   events: DemoEvent[];
 };
 
-type DemoRole = "hub" | "client" | "merchant";
+type DemoRole = "client" | "merchant";
 
 const DEFAULT_ORDER_ID = "pay_91A0EF";
 const NOT_FOUND_PHONE = "79030000002";
@@ -97,13 +94,6 @@ const statusCopy: Record<DemoStatus, { title: string; description: string; tone:
     tone: "warning",
   },
 };
-
-const rows = [
-  { order: "#A3-2048", phone: "+7 900 **-45-67", status: "pending_user_action", webhook: "ожидает", amount: "12 480 ₽" },
-  { order: "#A3-2047", phone: "+7 911 **-22-10", status: "delivery_unknown", webhook: "retry через 1 мин", amount: "8 200 ₽" },
-  { order: "#A3-2046", phone: "+7 916 **-18-30", status: "succeeded", webhook: "200 OK", amount: "4 900 ₽" },
-  { order: "#A3-2045", phone: "+7 903 **-00-02", status: "expired", webhook: "не отправлять дубль", amount: "2 400 ₽" },
-];
 
 function normalizePhone(value: string) {
   const digits = value.replace(/\D/g, "");
@@ -251,7 +241,7 @@ function getRoleFromPath(pathname: string): DemoRole {
   if (pathname.includes("/pay/")) {
     return "client";
   }
-  return "hub";
+  return "client";
 }
 
 function getOrderIdFromPath(pathname: string) {
@@ -260,7 +250,7 @@ function getOrderIdFromPath(pathname: string) {
 }
 
 function getOrderId(role: DemoRole, pathname: string) {
-  if (role === "hub") {
+  if (role === "client" && !pathname.includes("/pay/")) {
     return DEFAULT_ORDER_ID;
   }
   return getOrderIdFromPath(pathname);
@@ -276,33 +266,7 @@ export function A3PayDemo() {
     return <MerchantBranch {...demo} />;
   }
 
-  if (role === "client") {
-    return <ClientBranch {...demo} />;
-  }
-
-  return <DemoHub payment={demo.payment} reset={demo.reset} />;
-}
-
-function DemoHub({ payment, reset }: { payment: DemoPayment; reset: () => void }) {
-  return (
-    <main className="a3pay-hub">
-      <section className="a3pay-hub__panel">
-        <div className="a3pay-hub__eyebrow">A3Pay × Ozon Bank</div>
-        <h1>Две ветки демо из Figma v4</h1>
-        <p>
-          Клиентская ветка повторяет mobile flow: телефон, push, подтверждение в Ozon Bank, чек и recovery.
-          Мерчантская ветка повторяет web flow: создание payment_intent и реестр платежей.
-        </p>
-        <div className="a3pay-hub__links">
-          <a href={`/a3pay-demo/pay/${payment.id}`}>A3Pay Demo MVP</a>
-          <a href={`/a3pay-demo/merchant/orders/${payment.id}`}>A3Pay Demo MVP Merchant</a>
-        </div>
-        <Button variant="outline" size="m" onClick={reset} leadingIcon={<RotateCcw size={16} />}>
-          Сбросить demo state
-        </Button>
-      </section>
-    </main>
-  );
+  return <ClientBranch {...demo} />;
 }
 
 function ClientBranch({
@@ -395,7 +359,6 @@ function ClientBranch({
   if (payment.status === "client_not_found") {
     return (
       <ClientShell subtitle="Recovery">
-        <ScreenChip>Screen 05</ScreenChip>
         <h1>Ozon Bank не найден</h1>
         <p className="a3pay-mobile-note">Показываем понятный fallback без обещания, которого банк ещё не подтвердил.</p>
         <section className="a3pay-error-card">
@@ -416,7 +379,6 @@ function ClientBranch({
 
   return (
     <ClientShell subtitle="Оплата по номеру телефона">
-      <ScreenChip>Screen 01</ScreenChip>
       <h1>Проверьте оплату</h1>
       <p className="a3pay-mobile-note">Пользователь видит, кому и сколько платит до ввода телефона.</p>
       <PaymentSummary payment={payment} />
@@ -453,25 +415,19 @@ function ClientBranch({
 
 function ClientShell({ children, subtitle }: { children: React.ReactNode; subtitle: string }) {
   return (
-    <main className="a3pay-mobile-branch" aria-label="A3Pay Demo MVP">
-      <section className="a3pay-phone-frame">
-        <div className="a3pay-phone-surface">
-          <div className="a3pay-topbar">
-            <span className="a3pay-mark">A3</span>
-            <div>
-              <strong>A3Pay</strong>
-              <span>{subtitle}</span>
-            </div>
+    <main className="a3pay-mobile-branch" aria-label="A3Pay">
+      <section className="a3pay-phone-surface">
+        <div className="a3pay-topbar">
+          <span className="a3pay-mark">A3</span>
+          <div>
+            <strong>A3Pay</strong>
+            <span>{subtitle}</span>
           </div>
-          {children}
         </div>
+        {children}
       </section>
     </main>
   );
-}
-
-function ScreenChip({ children }: { children: React.ReactNode }) {
-  return <span className="a3pay-screen-chip">{children}</span>;
 }
 
 function PaymentSummary({ payment }: { payment: DemoPayment }) {
@@ -493,29 +449,27 @@ function PaymentSummary({ payment }: { payment: DemoPayment }) {
 
 function LockScreen({ onOpen, payment }: { onOpen: () => void; payment: DemoPayment }) {
   return (
-    <main className="a3pay-mobile-branch" aria-label="A3Pay Demo MVP">
-      <section className="a3pay-phone-frame">
-        <div className="a3pay-lockscreen-v4">
-          <div className="a3pay-lockscreen-v4__status">
-            <span>18:42</span>
-            <span>5G 100%</span>
-          </div>
-          <div className="a3pay-lockscreen-v4__time">
-            <strong>18:42</strong>
-            <span>пятница, 19 июня</span>
-          </div>
-          <p className="a3pay-lockscreen-v4__hint">A3Pay ожидает подтверждение в банке</p>
-          <button className="a3pay-bank-push" type="button" onClick={onOpen}>
-            <span className="a3pay-bank-push__icon">O</span>
-            <span>
-              <strong>Ozon Bank</strong>
-              <small>Запрос на оплату A3Pay</small>
-              <em>{formatMoney(payment.amount)} · {payment.merchantName}</em>
-            </span>
-            <ExternalLink size={18} />
-          </button>
-          <div className="a3pay-lockscreen-v4__home" />
+    <main className="a3pay-mobile-branch" aria-label="A3Pay">
+      <section className="a3pay-lockscreen-v4">
+        <div className="a3pay-lockscreen-v4__status">
+          <span>18:42</span>
+          <span>5G 100%</span>
         </div>
+        <div className="a3pay-lockscreen-v4__time">
+          <strong>18:42</strong>
+          <span>пятница, 19 июня</span>
+        </div>
+        <p className="a3pay-lockscreen-v4__hint">A3Pay ожидает подтверждение в банке</p>
+        <button className="a3pay-bank-push" type="button" onClick={onOpen}>
+          <span className="a3pay-bank-push__icon">O</span>
+          <span>
+            <strong>Ozon Bank</strong>
+            <small>Запрос на оплату A3Pay</small>
+            <em>{formatMoney(payment.amount)} · {payment.merchantName}</em>
+          </span>
+          <ExternalLink size={18} />
+        </button>
+        <div className="a3pay-lockscreen-v4__home" />
       </section>
     </main>
   );
@@ -524,7 +478,6 @@ function LockScreen({ onOpen, payment }: { onOpen: () => void; payment: DemoPaym
 function BankConfirmScreen({ onConfirm, payment }: { onConfirm: () => void; payment: DemoPayment }) {
   return (
     <ClientShell subtitle="Ozon Bank">
-      <ScreenChip>Screen 03</ScreenChip>
       <h1>Подтвердите оплату</h1>
       <p className="a3pay-mobile-note">Банк показывает сумму, получателя, комиссию и ID операции до списания.</p>
       <section className="a3pay-bank-hero">
@@ -561,7 +514,6 @@ function BankConfirmScreen({ onConfirm, payment }: { onConfirm: () => void; paym
 function ReceiptScreen({ onReset, payment }: { onReset: () => void; payment: DemoPayment }) {
   return (
     <ClientShell subtitle="Оплата завершена">
-      <ScreenChip>Screen 04</ScreenChip>
       <h1>Оплата прошла</h1>
       <p className="a3pay-mobile-note">Receipt-style success: видно сумму, способ оплаты, чек и возврат в магазин.</p>
       <section className="a3pay-success-hero">
@@ -602,11 +554,9 @@ function KeyValueCard({ rows }: { rows: Array<[string, string]> }) {
 
 function MerchantBranch({
   payment,
-  reset,
   updatePayment,
 }: {
   payment: DemoPayment;
-  reset: () => void;
   updatePayment: (patch: Partial<DemoPayment> & { event?: DemoEvent }) => void;
 }) {
   const [phone, setPhone] = React.useState(payment.phone ? formatPhone(payment.phone) : "+7 900 123-45-67");
@@ -646,230 +596,254 @@ function MerchantBranch({
     }, 700);
   };
 
-  const sendPushAgain = () => {
-    updatePayment({
-      event: makeEvent("Мерчант повторно отправил push клиенту", "info"),
-      pushAttempts: payment.pushAttempts + 1,
-      status: "push_sent",
-    });
-  };
-
-  const expirePush = () => {
-    updatePayment({
-      event: makeEvent("Push истёк: клиент не открыл уведомление", "warning"),
-      status: "expired",
-    });
-  };
-
-  const markAsPaid = () => {
-    updatePayment({
-      event: makeEvent("Webhook обновил платёж как успешный", "success"),
-      status: "paid",
-    });
-  };
-
   return (
-    <main className="a3pay-merchant-branch" aria-label="A3Pay Demo MVP Merchant">
-      <header className="a3pay-merchant-header">
-        <div>
-          <span>A3Pay Demo MVP Merchant</span>
-          <h1>Платежи и статусы</h1>
-          <p>Мерчант видит, где находится оплата: запрос, ожидание клиента, банк, webhook.</p>
-        </div>
-        <StatusBadge status={payment.status} />
-      </header>
-
-      <section className="a3pay-merchant-grid">
-        <article className="a3pay-merchant-panel a3pay-merchant-panel--create">
-          <div className="a3pay-merchant-panel__heading">
-            <div>
-              <span>Screen 10</span>
-              <h2>Создание платежа</h2>
-            </div>
-            <strong>{formatMoney(payment.amount)}</strong>
-          </div>
-          <p className="a3pay-merchant-muted">
-            Мерчант создаёт заказ, A3Pay собирает телефон на checkout или получает его с согласием клиента.
-          </p>
-          <div className="a3pay-merchant-form-v4">
-            <Input label="merchant_order_id" value={payment.orderNumber} readOnly />
-            <Input label="amount" value={formatMoney(payment.amount)} readOnly />
-            <Input label="phone_mode" value="collect_on_a3pay_checkout" readOnly />
-            <Input
-              disabled={payment.status === "checking_phone"}
-              hint={phoneError || "Если номер передаёт мерчант, нужно согласие клиента."}
-              inputMode="tel"
-              invalid={Boolean(phoneError)}
-              label="Телефон клиента"
-              leftIcon={<Smartphone size={18} />}
-              onChange={(event) => setPhone(event.target.value)}
-              value={phone}
-            />
-          </div>
-          <section className="a3pay-items-table">
-            <strong>Позиции чека</strong>
-            <span>Абонемент FitSpace • 12 480 ₽ • НДС 20% • quantity 1</span>
-            <span>TTL: 15 минут · return_url · webhook_url · merchant_order_id</span>
-          </section>
-          <div className="a3pay-merchant-actions">
-            <Button
-              disabled={payment.status === "checking_phone" || payment.status === "paid"}
-              leadingIcon={payment.status === "checking_phone" ? <Loader2 className="a3pay-spin" size={18} /> : <Send size={18} />}
-              onClick={checkAndSendPush}
-              size="l"
-            >
-              {payment.status === "checking_phone" ? "Проверяем клиента" : "Отправить push"}
-            </Button>
-            <Button
-              disabled={payment.status !== "push_sent" && payment.status !== "push_received" && payment.status !== "expired"}
-              leadingIcon={<RefreshCw size={18} />}
-              onClick={sendPushAgain}
-              size="l"
-              variant="outline"
-            >
-              Повторить запрос
-            </Button>
-          </div>
-          <section className="a3pay-risk-card">
-            <strong>Риск MVP</strong>
-            <span>Без подтверждённого API Ozon Bank телефонный push остаётся partner-dependent. QR/ссылка нужны как recovery.</span>
-          </section>
-        </article>
-
-        <article className="a3pay-merchant-panel a3pay-merchant-panel--dashboard">
-          <div className="a3pay-merchant-panel__heading">
-            <div>
-              <span>Screen 11</span>
-              <h2>Payments dashboard statuses</h2>
-            </div>
-            <Button variant="outline" size="m" onClick={reset} leadingIcon={<RotateCcw size={16} />}>
-              Сбросить
-            </Button>
-          </div>
-          <div className="a3pay-kpi-row">
-            <Kpi label="pending_user_action" value={payment.status === "paid" ? "0" : "1"} />
-            <Kpi label="succeeded" value={payment.status === "paid" ? "1" : "12"} />
-            <Kpi label="webhook health" value={payment.status === "paid" ? "200 OK" : "ожидает"} />
-          </div>
-          <div className="a3pay-status-table" role="table" aria-label="Платежи и статусы">
-            <div className="a3pay-status-table__head" role="row">
-              <span>order</span>
-              <span>phone</span>
-              <span>status</span>
-              <span>webhook</span>
-              <span>amount</span>
-            </div>
-            <PaymentRow
-              amount={formatMoney(payment.amount)}
-              order={`#${payment.orderNumber}`}
-              phone={payment.phone ? formatPhone(payment.phone).replace(/\d{2}-\d{2}$/, "**-**") : "+7 900 **-45-67"}
-              status={statusCopy[payment.status].title}
-              webhook={payment.status === "paid" ? "200 OK" : payment.status === "client_not_found" ? "нет клиента" : "ожидает"}
-            />
-            {rows.slice(1).map((row) => (
-              <PaymentRow key={row.order} {...row} />
-            ))}
-          </div>
-          {payment.status === "client_not_found" ? (
-            <section className="a3pay-merchant-state a3pay-merchant-state--error">
-              <XCircle size={26} />
-              <strong>Клиент не найден</strong>
-              <span>Номер не связан с активным Ozon Bank.</span>
-            </section>
-          ) : null}
-          {payment.status === "paid" ? (
-            <section className="a3pay-merchant-state a3pay-merchant-state--success">
-              <CheckCircle2 size={26} />
-              <strong>Оплачено</strong>
-              <span>Клиент подтвердил платёж в приложении банка.</span>
-            </section>
-          ) : null}
-          <div className="a3pay-merchant-mini-actions">
-            <Button variant="outline" size="m" onClick={expirePush} disabled={payment.status !== "push_sent" && payment.status !== "push_received"}>
-              Истёк timeout
-            </Button>
-            <Button variant="outline" size="m" onClick={markAsPaid} disabled={payment.status === "paid"}>
-              Отметить успех
-            </Button>
-          </div>
-          <div className="a3pay-merchant-rule-row">
-            <section>
-              <strong>Правило против дублей</strong>
-              <span>Не создавать новую попытку при pending. Повтор — после expired/failed или действия клиента.</span>
-            </section>
-            <section>
-              <strong>Webhook health</strong>
-              <span>Показывать last_webhook_at, attempts, response_code, next_retry_at.</span>
-            </section>
-          </div>
-        </article>
+    <main className="a3pay-merchant-product" aria-label="A3Pay Merchant">
+      <section className="a3pay-merchant-surfaces">
+        <MerchantCreateSurface
+          payment={payment}
+          phone={phone}
+          phoneError={phoneError}
+          onPhoneChange={setPhone}
+          onSubmit={checkAndSendPush}
+        />
+        <MerchantDetailSurface payment={payment} />
+        <MerchantDashboardSurface payment={payment} />
       </section>
     </main>
   );
 }
 
-function Kpi({ label, value }: { label: string; value: string }) {
+function MerchantCreateSurface({
+  onPhoneChange,
+  onSubmit,
+  payment,
+  phone,
+  phoneError,
+}: {
+  onPhoneChange: (value: string) => void;
+  onSubmit: () => void;
+  payment: DemoPayment;
+  phone: string;
+  phoneError: string;
+}) {
   return (
-    <section className="a3pay-kpi">
+    <article className="a3pay-merchant-screen a3pay-merchant-screen--create">
+      <MerchantTopNav />
+      <header className="a3pay-merchant-screen-header">
+        <h1>Создать платёж A3Pay</h1>
+        <p>Мерчант создаёт запрос: сумма, заказ, телефон клиента, fallback ссылка.</p>
+      </header>
+      <div className="a3pay-create-grid">
+        <section className="a3pay-request-preview">
+          <h2>Что увидит клиент</h2>
+          <PaymentSummary payment={payment} />
+        </section>
+        <section className="a3pay-merchant-form-surface">
+          <h2>Данные платежа</h2>
+          <MerchantField label="Сумма" value={formatMoney(payment.amount)} />
+          <MerchantField label="Описание" value="Абонемент FitSpace" />
+          <Input
+            disabled={payment.status === "checking_phone"}
+            hint={phoneError || "Push уйдёт в Ozon Bank после проверки номера."}
+            inputMode="tel"
+            invalid={Boolean(phoneError)}
+            label="Телефон клиента"
+            leftIcon={<Smartphone size={18} />}
+            onChange={(event) => onPhoneChange(event.target.value)}
+            value={phone}
+          />
+          <MerchantField label="Сколько активен запрос" value="20 мин" />
+          <Button
+            disabled={payment.status === "checking_phone" || payment.status === "paid"}
+            leadingIcon={payment.status === "checking_phone" ? <Loader2 className="a3pay-spin" size={18} /> : <Send size={18} />}
+            onClick={onSubmit}
+            size="l"
+          >
+            {payment.status === "checking_phone" ? "Проверяем клиента" : "Создать запрос на оплату и отправить push в Ozon банк"}
+          </Button>
+        </section>
+      </div>
+    </article>
+  );
+}
+
+function MerchantDetailSurface({ payment }: { payment: DemoPayment }) {
+  const isError = payment.status === "client_not_found";
+  const isPaid = payment.status === "paid";
+  const title = isError ? "Клиент не найден" : isPaid ? "Платёж оплачен" : "Push отправлен клиенту";
+  const description = isError
+    ? "Номер не связан с активным Ozon Bank."
+    : isPaid
+      ? "Webhook подтвердил оплату, заказ можно отдавать клиенту."
+      : "Ожидаем подтверждение в Ozon Bank. Запрос активен ещё 04:32.";
+  const tone = isError ? "error" : isPaid ? "success" : "warning";
+
+  return (
+    <article className="a3pay-merchant-screen a3pay-merchant-screen--detail">
+      <MerchantTopNav />
+      <header className="a3pay-merchant-screen-header">
+        <span>Реестр платежей / {payment.id}</span>
+        <h1>Платёж {payment.id}</h1>
+      </header>
+      <section className="a3pay-merchant-status-card" data-tone={tone}>
+        {isError ? <XCircle size={30} /> : isPaid ? <CheckCircle2 size={30} /> : <Bell size={30} />}
+        <div>
+          <h2>{title}</h2>
+          <p>{description}</p>
+        </div>
+        <StatusPill status={payment.status} />
+      </section>
+      <div className="a3pay-facts-grid">
+        <MerchantField label="Сумма" value={formatMoney(payment.amount)} />
+        <MerchantField label="Клиент" value={payment.phone ? maskPhone(payment.phone) : "+7 900 ••-45-67"} />
+        <MerchantField label="Заказ мерчанта" value={`ORD-${payment.orderNumber}`} />
+        <MerchantField label="Метод" value="Ozon Bank" />
+      </div>
+      <section className="a3pay-timeline-card">
+        <h2>История событий</h2>
+        {getMerchantTimeline(payment).map((event) => (
+          <div className="a3pay-timeline-row" key={event}>
+            <span />
+            <strong>{event}</strong>
+          </div>
+        ))}
+      </section>
+    </article>
+  );
+}
+
+function MerchantDashboardSurface({ payment }: { payment: DemoPayment }) {
+  return (
+    <article className="a3pay-merchant-screen a3pay-merchant-screen--dashboard">
+      <MerchantTopNav />
+      <header className="a3pay-merchant-screen-header">
+        <h1>Операции A3Pay</h1>
+        <p>Реестр платежей показывает статус клиента, push и webhook без ручной сверки с банком.</p>
+      </header>
+      <div className="a3pay-kpi-row">
+        <Kpi label="Сегодня оплачено" value={payment.status === "paid" ? "1 248 000 ₽" : "1 235 520 ₽"} hint="+12% к вчера" />
+        <Kpi label="Ожидают push" value={payment.status === "paid" ? "7" : "8"} hint="проверить очередь" />
+        <Kpi label="Ошибки номера" value={payment.status === "client_not_found" ? "4" : "3"} hint="нужен fallback" />
+        <Kpi label="Среднее подтверждение" value="42 сек" hint="норма" />
+      </div>
+      <div className="a3pay-filters-row">
+        <span><Search size={16} /> Поиск по ID / телефону</span>
+        <span>Статус: все</span>
+        <span>Метод: Ozon Bank</span>
+        <span>Период: сегодня</span>
+      </div>
+      <div className="a3pay-payments-table" role="table" aria-label="Операции A3Pay">
+        <div className="a3pay-table-head" role="row">
+          <span>ID</span>
+          <span>Клиент</span>
+          <span>Сумма</span>
+          <span>Статус</span>
+          <span>Последнее событие</span>
+          <span>Действие</span>
+        </div>
+        <PaymentRow
+          action={payment.status === "client_not_found" ? "fallback" : "Открыть"}
+          amount={formatMoney(payment.amount)}
+          client={payment.phone ? maskPhone(payment.phone) : "+7 900 ••-45-67"}
+          event={statusCopy[payment.status].description}
+          id={payment.id}
+          status={getTableStatus(payment.status)}
+        />
+        <PaymentRow action="Открыть" amount="8 200 ₽" client="+7 911 ••-22-10" event="Ожидаем подтверждение клиента" id="pay_91A0EE" status="push_sent" />
+        <PaymentRow action="Повторить" amount="4 900 ₽" client="+7 916 ••-18-30" event="Webhook 200 OK" id="pay_91A0ED" status="paid" />
+        <PaymentRow action="fallback" amount="2 400 ₽" client="+7 903 ••-00-02" event="Номер не связан с Ozon Bank" id="pay_91A0EC" status="phone_not_found" />
+      </div>
+    </article>
+  );
+}
+
+function MerchantTopNav() {
+  return (
+    <nav className="a3pay-merchant-nav">
+      <strong>A3Pay merchant</strong>
+      <span>Ozon Bank</span>
+    </nav>
+  );
+}
+
+function MerchantField({ label, value }: { label: string; value: string }) {
+  return (
+    <section className="a3pay-merchant-field">
       <span>{label}</span>
       <strong>{value}</strong>
     </section>
   );
 }
 
+function Kpi({ hint, label, value }: { hint: string; label: string; value: string }) {
+  return (
+    <section className="a3pay-kpi">
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{hint}</small>
+    </section>
+  );
+}
+
 function PaymentRow({
+  action,
   amount,
-  order,
-  phone,
+  client,
+  event,
+  id,
   status,
-  webhook,
 }: {
+  action: string;
   amount: string;
-  order: string;
-  phone: string;
+  client: string;
+  event: string;
+  id: string;
   status: string;
-  webhook: string;
 }) {
   return (
-    <div className="a3pay-status-table__row" role="row">
-      <span>{order}</span>
-      <span>{phone}</span>
-      <span>{status}</span>
-      <span>{webhook}</span>
+    <div className="a3pay-table-row" role="row">
+      <span>{id}</span>
+      <span>{client}</span>
       <span>{amount}</span>
+      <span className="a3pay-table-chip">{status}</span>
+      <span>{event}</span>
+      <strong>{action}</strong>
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: DemoStatus }) {
-  const copy = statusCopy[status];
-  const Icon = getStatusIcon(status);
-
-  return (
-    <span className="a3pay-status-badge" data-tone={copy.tone}>
-      <Icon size={15} />
-      {copy.title}
-    </span>
-  );
+function StatusPill({ status }: { status: DemoStatus }) {
+  return <span className="a3pay-status-pill">{getTableStatus(status)}</span>;
 }
 
-function getStatusIcon(status: DemoStatus) {
+function getTableStatus(status: DemoStatus) {
   if (status === "paid") {
-    return CheckCircle2;
+    return "paid";
   }
   if (status === "client_not_found") {
-    return XCircle;
-  }
-  if (status === "checking_phone") {
-    return Search;
-  }
-  if (status === "push_sent" || status === "push_received") {
-    return Bell;
+    return "phone_not_found";
   }
   if (status === "expired") {
-    return Clock3;
+    return "expired";
   }
-  return ShieldCheck;
+  if (status === "draft" || status === "checking_phone") {
+    return "draft";
+  }
+  return "push_sent";
+}
+
+function getMerchantTimeline(payment: DemoPayment) {
+  if (payment.status === "paid") {
+    return ["Запрос оплаты создан", "Push отправлен", "Клиент подтвердил оплату", "Webhook обновил заказ"];
+  }
+  if (payment.status === "client_not_found") {
+    return ["Запрос оплаты создан", "Проверка номера завершилась ошибкой", "Клиент не найден"];
+  }
+  return ["Запрос оплаты создан", "Push отправлен", "Ожидаем подтверждение в Ozon Bank"];
+}
+
+function maskPhone(value: string) {
+  return formatPhone(value).replace(/(\+7 \d{3}) \d{3}-(\d{2})-(\d{2})/, "$1 ••-$2-$3");
 }
 
 function formatMoney(amount: number) {

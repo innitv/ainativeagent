@@ -2,11 +2,11 @@
 
 - Run ID: 2026-06-05-1780631705177
 - Goal: Workflow run
-- Status: failed
+- Status: partial
 - Profile: standard
 - Execution mode: local
-- Current stage: 01-research
-- Updated: 2026-06-06T07:43:00.657Z
+- Current stage: none
+- Updated: 2026-06-19T19:51:14.554Z
 
 ## What To Read First
 
@@ -17,16 +17,16 @@
 - `stage-gate-ledger.md` (stage_gate_ledger, completed)
 - `competitive-analysis.md` (competitive_analysis, completed)
 - `proto-personas.md` (proto_personas, completed)
-- `synthetic-interviews.md` (synthetic_interviews, failed)
+- `synthetic-interviews.md` (synthetic_interviews, partial)
 
 ## Progress
 
-- Completed artifacts: 11/22
+- Completed artifacts: 11/23
 - Blocking stages: 1
 
 ## Blocking Stages
 
-- 01-research Deep Research: failed - Research stage validation failed with 1 error(s).
+- 01-research Deep Research: partial - Research stage validation failed with 1 error(s).
 
 ## Artifact Groups
 
@@ -39,9 +39,10 @@
 | stage-gate-ledger.md | completed | 00-intake orchestrator | no |
 | recursive-brief.md | completed | 00-intake orchestrator | no |
 | research-summary.md | completed | 01-research research | yes |
+| scenario-user-flows.md | missing | 01-research research | yes |
 | competitive-analysis.md | completed | 01-research research | yes |
 | proto-personas.md | completed | 01-research research | yes |
-| synthetic-interviews.md | failed | 01-research research | yes |
+| synthetic-interviews.md | partial | 01-research research | yes |
 | swot.md | completed | 01-research research | yes |
 | prd.md | missing | 02-prd prd | yes |
 | ia-brief.md | missing | 03-ia ia | yes |
@@ -75,4 +76,4 @@
 
 ## Next Action
 
-Resolve 01-research Deep Research (failed) before continuing.
+Resolve 01-research Deep Research (partial) before continuing.

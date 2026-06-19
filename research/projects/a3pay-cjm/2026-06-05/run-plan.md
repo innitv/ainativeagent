@@ -35,7 +35,7 @@
 ## Inputs used
 
 - Пользовательский файл: `C:\Users\mrfra\Desktop\A3Pay_Research_Request_Extended.md`
-- Предыдущий быстрый черновик: `outputs/temp/a3pay-cjm-2026-06-05/a3pay-cjm-research.md`
+- Предыдущий быстрый черновик: `research/projects/a3pay-cjm/2026-06-05/source-drafts/a3pay-cjm-research.md`
 - Research templates: `agent-pack/artifacts/research/*.template.md`
 - Notion publication rules: `agent-pack/skills/notion-sync/SKILL.md`
 - Figma handoff rules: `agent-pack/skills/figma-handoff/SKILL.md`

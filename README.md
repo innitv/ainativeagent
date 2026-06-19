@@ -14,6 +14,8 @@
 
 Правило языка документации: человекочитаемые описания ведутся на русском языке. Английский допустим для имён файлов, команд, переменных, API-терминов и обязательных contract section keys вроде `## Inputs Used`, если они нужны валидатору или схемам.
 
+Короткая карта актуальных продуктовых поверхностей, research и веток находится в [`PROJECTS.md`](PROJECTS.md).
+
 ## Что сейчас является source of truth
 
 | Слой | Где смотреть | Зачем нужен |
@@ -250,12 +252,16 @@ apps/
     vite.config.ts
     src/
       App.tsx
-      types.ts
+      components-playground.tsx
       main.tsx
       styles.css
+      assets/fonts/InterVariable.woff2
+      components/ui/
       views/
-        LandingView.tsx
-        ConsoleView.tsx
+        a3pay-demo/
+siteportfolio/
+  src/
+  runs/2026-06-14/
 design/
   figma/
     a3-design-system/
@@ -265,8 +271,8 @@ design/
       design-system-audit.md
 tests/
   playwright/
+    a3pay-demo.spec.ts
     firecrawl.spec.ts
-    frontend.spec.ts
 agent-pack/guardrails/
   guardrails.policy.md
   approval-matrix.md

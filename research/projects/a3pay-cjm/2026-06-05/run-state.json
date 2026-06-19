@@ -3,10 +3,10 @@
   "goal": "Workflow run",
   "profile": "standard",
   "execution_mode": "local",
-  "status": "failed",
+  "status": "partial",
   "output_dir": "C:\\Project\\product-agent-studio\\research\\projects\\a3pay-cjm\\2026-06-05",
   "created_at": "2026-06-05T03:55:05.175Z",
-  "updated_at": "2026-06-06T07:43:00.657Z",
+  "updated_at": "2026-06-19T19:51:14.554Z",
   "stages": {
     "00-intake": {
       "id": "00-intake",
@@ -24,7 +24,7 @@
     "01-research": {
       "id": "01-research",
       "title": "Deep Research",
-      "status": "failed",
+      "status": "partial",
       "attempts": 2,
       "artifacts": [
         "research-summary.md",
@@ -33,11 +33,11 @@
         "synthetic-interviews.md",
         "swot.md"
       ],
-      "updated_at": "2026-06-06T07:43:00.657Z",
+      "updated_at": "2026-06-19T19:51:14.554Z",
+      "error": "Research stage validation failed with 1 error(s).",
       "notes": [
         "Reset by force rerun of 01-research at 2026-06-06T07:42:32.286Z."
-      ],
-      "error": "Research stage validation failed with 1 error(s)."
+      ]
     },
     "02-prd": {
       "id": "02-prd",
@@ -149,6 +149,5 @@
         "Reset by force rerun of 01-research at 2026-06-06T07:42:32.286Z."
       ]
     }
-  },
-  "current_stage": "01-research"
+  }
 }

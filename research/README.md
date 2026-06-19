@@ -41,6 +41,7 @@ research/
 
 - `projects/a3pay-cjm/`
 - `projects/a3pay-cjm-new/`
+- `projects/a3pay-ozon-bank-mvp/`
 - `projects/crm-russia-payments/`
 - `projects/real-estate-payments-russia-company-workflows-market-research/`
 

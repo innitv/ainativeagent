@@ -3,14 +3,13 @@
   "run_date": "2026-06-05",
   "run_id": "2026-06-05-1780631705177",
   "created_at": "2026-06-05T03:55:05.175Z",
-  "updated_at": "2026-06-06T07:43:00.657Z",
+  "updated_at": "2026-06-19T19:51:14.554Z",
   "workflow_profile": "standard",
   "execution_mode": "local",
-  "status": "failed",
-  "current_stage": "01-research",
+  "status": "partial",
   "source_request": "Workflow run",
   "output_dir": "C:\\Project\\product-agent-studio\\research\\projects\\a3pay-cjm\\2026-06-05",
   "has_reference": false,
   "notion_publication": "unknown",
-  "last_validated_at": "2026-06-05T03:55:05.175Z"
+  "last_validated_at": "2026-06-19T19:51:14.554Z"
 }

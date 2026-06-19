@@ -4,7 +4,7 @@
 
 - User request in current chat.
 - `C:\Users\mrfra\Desktop\A3Pay_Research_Request_Extended.md`
-- `outputs/temp/a3pay-cjm-2026-06-05/a3pay-cjm-research.md`
+- `research/projects/a3pay-cjm/2026-06-05/source-drafts/a3pay-cjm-research.md`
 
 ## Expansion
 

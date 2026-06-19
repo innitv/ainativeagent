@@ -11,13 +11,14 @@
 
 ## Внешние подключения
 
-- `apps/frontend/src/App.tsx` только маршрутизирует `/a3pay-demo` в `A3PayDemo`.
+- `apps/frontend/src/App.tsx` отдаёт A3Pay для `/` и `/a3pay-demo`, а `/portfolio` оставляет сайту-портфолио.
 - `apps/frontend/vite.config.ts` только подключает `a3payDemoMockApi()`.
 - `tests/playwright/a3pay-demo.spec.ts` проверяет пользовательские сценарии, но лежит в общем каталоге Playwright-тестов проекта.
 
 ## Ветки продукта
 
 - `/a3pay-demo` — клиентская ветка по умолчанию.
+- `/` — тот же клиентский flow при локальном запуске.
 - `/a3pay-demo/pay/pay_91A0EF` — `A3Pay MVP`, клиентская mobile-ветка из Figma.
 - `/a3pay-demo/merchant/orders/pay_91A0EF` — `A3Pay MVP Merchant`, web-ветка мерчанта из Figma.
 

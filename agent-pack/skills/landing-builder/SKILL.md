@@ -33,7 +33,7 @@ contract_schema: agent-pack/templates/skill.template.md
 
 Применяй skill только для `08-frontend`, когда уже есть `prd.md`, `ia-brief.md`, `design-brief.md`, `screens.md`, `copy-deck.md` и `prototype-report.md`. Frontend в полном workflow нельзя начинать раньше этих артефактов, кроме явно отмеченного `quick draft`.
 
-Стек по умолчанию: React + Vite + Tailwind CSS. Верстка целевого лендинга и калькуляторов живет в `apps/frontend/src/views/`. Для базового лендинга используй `apps/frontend/src/views/LandingView.tsx`; для отдельного продукта допустим новый `<ProductName>View.tsx`. `ConsoleView.tsx` не смешивай с кодом лендинга. `App.tsx` держи тонким роутером.
+Стек по умолчанию: React + Vite + Tailwind CSS. Верстка самостоятельного продукта живет в отдельном каталоге `apps/frontend/src/views/<product-slug>/`; личный сайт хранится отдельно в `siteportfolio/src/`. Не переиспользуй код одного продукта как основу другого без явного решения. `App.tsx` держи тонким роутером, который подключает только актуальные surfaces.
 
 ## 2. Обязательные inputs
 

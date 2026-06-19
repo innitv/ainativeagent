@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-06T07:43:00.678Z",
+  "generated_at": "2026-06-19T19:51:14.568Z",
   "run_id": "2026-06-05-1780631705177",
   "workflow_profile": "standard",
   "artifacts": [
@@ -17,9 +17,9 @@
       "human_readable": true,
       "safe_to_publish": false,
       "lifecycle": "active",
-      "size_bytes": 4416,
-      "updated_at": "2026-06-05T09:25:21.679Z",
-      "checksum_sha256": "345829e42ce935c1a6d8e7eca1c405a5a4342abbb73eee8a22258772b9cd3413"
+      "size_bytes": 4435,
+      "updated_at": "2026-06-19T19:47:59.325Z",
+      "checksum_sha256": "5a9bf573a845e99f11258a2f7dd3d0b1596b48cd6c0f12f29e6fb6a3b68c7f44"
     },
     {
       "artifact_name": "handoff_bundle",
@@ -39,9 +39,9 @@
       "human_readable": true,
       "safe_to_publish": false,
       "lifecycle": "active",
-      "size_bytes": 2323,
-      "updated_at": "2026-06-06T07:43:00.645Z",
-      "checksum_sha256": "54dae60a2f91aeaf9027c2c575efd73839f4cfdcf2ea370cd1e93db9a3483bab"
+      "size_bytes": 2341,
+      "updated_at": "2026-06-19T19:47:57.271Z",
+      "checksum_sha256": "e5475159c141b014bf0a358f40bf434a43ab65b4e48c9f58b30b5ccd07b28ff0"
     },
     {
       "artifact_name": "stage_gate_ledger",
@@ -84,9 +84,9 @@
       "human_readable": true,
       "safe_to_publish": false,
       "lifecycle": "active",
-      "size_bytes": 3825,
-      "updated_at": "2026-06-05T03:56:05.186Z",
-      "checksum_sha256": "41bd13c37e5ca40b0d1a35dbff6f1861fb292a36e36ee94fe76b864094926584"
+      "size_bytes": 3844,
+      "updated_at": "2026-06-19T19:47:58.392Z",
+      "checksum_sha256": "ae42e62558274754fffa4737814a416963fe3ca98f6aeab1d5d35ef52946471d"
     },
     {
       "artifact_name": "research_summary",
@@ -114,6 +114,28 @@
       "size_bytes": 75446,
       "updated_at": "2026-06-06T07:43:00.640Z",
       "checksum_sha256": "365fab05f15b22f75aabbb4d9bc111cb6fd3c23fc1cc6e005194bb2fd70dad54"
+    },
+    {
+      "artifact_name": "scenario_user_flows",
+      "file": "scenario-user-flows.md",
+      "artifact_type": "product_artifact",
+      "stage_id": "01-research",
+      "stage_title": "Deep Research",
+      "producer_stage": "01-research",
+      "producer_agent": "research",
+      "consumers": [
+        "02-prd",
+        "03-ia",
+        "04-design",
+        "05-copy",
+        "10-test-bench",
+        "11-qa"
+      ],
+      "status": "missing",
+      "exists": false,
+      "human_readable": true,
+      "safe_to_publish": true,
+      "lifecycle": "draft"
     },
     {
       "artifact_name": "competitive_analysis",
@@ -166,11 +188,11 @@
       "consumers": [
         "11-qa"
       ],
-      "status": "failed",
+      "status": "partial",
       "exists": true,
       "human_readable": true,
       "safe_to_publish": true,
-      "lifecycle": "blocked",
+      "lifecycle": "partial",
       "size_bytes": 3028,
       "updated_at": "2026-06-06T07:43:00.643Z",
       "checksum_sha256": "1ebbe6bf6765b27ca02511c13e1a9ce9a093493ebada49dfeffc63a49c6481c2"

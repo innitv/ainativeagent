@@ -1,405 +1,583 @@
-.a3pay-client-app,
-.a3pay-lockscreen {
-  width: min(100vw, 430px);
-  min-height: 100dvh;
-  margin: 0 auto;
-  color: #111827;
-  background: #f7f9fc;
-}
-
-.a3pay-client-app {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 0 20px 22px;
-}
-
-.a3pay-client-app--bank {
-  background: #fff;
-}
-
-.a3pay-statusbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 2px 8px;
-  color: #101828;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.a3pay-client-summary {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 22px;
-  color: #fff;
-  border-radius: 28px;
-  background: linear-gradient(145deg, #111827 0%, #17335e 100%);
-  box-shadow: 0 18px 42px rgba(17, 24, 39, 0.18);
-}
-
-.a3pay-client-summary span,
-.a3pay-client-summary small {
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 13px;
-}
-
-.a3pay-client-summary h1 {
-  max-width: 220px;
-  margin: 8px 0 0;
-  color: #fff;
-  font-size: 24px;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-}
-
-.a3pay-client-summary > strong {
-  flex: 0 0 auto;
-  font-size: 24px;
-  letter-spacing: -0.03em;
-}
-
-.a3pay-client-card,
-.a3pay-bank-screen,
-.a3pay-client-success {
+.a3pay-hub {
   display: grid;
-  gap: 18px;
-  padding: 18px;
-  border: 1px solid rgba(137, 150, 168, 0.22);
-  border-radius: 26px;
-  background: #fff;
-  box-shadow: 0 16px 38px rgba(17, 24, 39, 0.08);
+  min-height: 100dvh;
+  place-items: center;
+  padding: 28px;
+  color: #111827;
+  background: #f4f7fb;
 }
 
-.a3pay-pay-method,
-.a3pay-bank-screen__brand {
+.a3pay-hub__panel {
+  display: grid;
+  width: min(760px, 100%);
+  gap: 18px;
+  padding: 34px;
+  border: 1px solid #eef2f7;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(16, 24, 40, 0.1);
+}
+
+.a3pay-hub__eyebrow,
+.a3pay-merchant-header span,
+.a3pay-merchant-panel__heading span {
+  color: #145ceb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.a3pay-hub h1,
+.a3pay-merchant-header h1 {
+  margin: 0;
+  color: #111827;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1.02;
+}
+
+.a3pay-hub p,
+.a3pay-merchant-header p,
+.a3pay-merchant-muted {
+  margin: 0;
+  color: #7a8798;
+  line-height: 1.45;
+}
+
+.a3pay-hub__links {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
-.a3pay-pay-method > div,
-.a3pay-bank-screen__brand > div {
-  display: grid;
-  flex: 1;
-  gap: 2px;
-}
-
-.a3pay-pay-method small,
-.a3pay-bank-screen__brand small {
-  color: #667085;
-  font-size: 14px;
-}
-
-.a3pay-pay-method__logo,
-.a3pay-bank-screen__brand > span,
-.a3pay-bank-push__icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
+.a3pay-hub__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 18px;
   color: #fff;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #1262ff, #00a47a);
+  border-radius: 14px;
+  background: #145ceb;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.a3pay-hub__links a + a {
+  color: #111827;
+  background: #eaf1ff;
+}
+
+.a3pay-mobile-branch {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 24px;
+  color: #111827;
+  background: #f4f7fb;
+}
+
+.a3pay-phone-frame {
+  width: 390px;
+  min-height: 844px;
+  padding: 10px;
+  border-radius: 38px;
+  background: #0b1220;
+  box-shadow: 0 24px 48px rgba(16, 24, 40, 0.18);
+}
+
+.a3pay-phone-surface,
+.a3pay-lockscreen-v4 {
+  display: flex;
+  flex-direction: column;
+  width: 370px;
+  min-height: 824px;
+  overflow: hidden;
+  border-radius: 30px;
+}
+
+.a3pay-phone-surface {
+  gap: 16px;
+  padding: 20px;
+  background: #fff;
+}
+
+.a3pay-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.a3pay-mark {
+  display: grid;
+  width: 42px;
+  height: 33px;
+  place-items: center;
+  color: #fff;
+  border-radius: 12px;
+  background: #145ceb;
+  font-size: 13px;
   font-weight: 900;
 }
 
-.a3pay-client-note,
-.a3pay-inline-error {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.42;
+.a3pay-topbar div {
+  display: grid;
+  gap: 1px;
 }
 
-.a3pay-client-note {
-  color: #0f5f46;
-  background: #eafaf4;
+.a3pay-topbar strong {
+  font-size: 17px;
 }
 
-.a3pay-inline-error {
-  color: #b42318;
-  background: #fff1f0;
+.a3pay-topbar span {
+  color: #7a8798;
+  font-size: 12px;
 }
 
-.a3pay-client-primary {
-  width: 100%;
-}
-
-.a3pay-lockscreen {
-  position: relative;
-  overflow: hidden;
-  padding: 0 20px 22px;
-  color: #fff;
-  background:
-    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.18), transparent 24%),
-    radial-gradient(circle at 82% 24%, rgba(18, 98, 255, 0.34), transparent 30%),
-    linear-gradient(160deg, #151923 0%, #28364b 52%, #0f172a 100%);
-}
-
-.a3pay-lockscreen__status {
-  display: flex;
+.a3pay-screen-chip,
+.a3pay-blue-chip {
+  display: inline-flex;
+  width: fit-content;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 2px 8px;
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 13px;
+  min-height: 24px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 800;
 }
 
-.a3pay-lockscreen__center {
+.a3pay-screen-chip {
+  color: #fff;
+  background: #0b1220;
+}
+
+.a3pay-blue-chip {
+  color: #145ceb;
+  background: #eaf1ff;
+}
+
+.a3pay-phone-surface h1 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.28;
+}
+
+.a3pay-mobile-note {
+  margin: 0;
+  color: #7a8798;
+  font-size: 12px;
+  line-height: 1.28;
+}
+
+.a3pay-payment-summary,
+.a3pay-phone-card,
+.a3pay-bottom-bar,
+.a3pay-kv-card,
+.a3pay-safety-note,
+.a3pay-success-hero,
+.a3pay-error-card,
+.a3pay-merchant-note {
+  border-radius: 18px;
+}
+
+.a3pay-payment-summary {
   display: grid;
-  gap: 4px;
-  justify-items: center;
-  padding-top: 72px;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #eef2f7;
+  background: #f8fafc;
 }
 
-.a3pay-lockscreen__center strong {
-  font-size: 76px;
-  line-height: 0.92;
-  letter-spacing: -0.08em;
-}
-
-.a3pay-lockscreen__center span {
-  color: rgba(255, 255, 255, 0.72);
-  font-weight: 700;
-}
-
-.a3pay-bank-push {
-  position: absolute;
-  top: 226px;
-  left: 16px;
-  right: 16px;
+.a3pay-payment-summary__top {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 96px;
-  padding: 14px;
-  text-align: left;
-  color: #101828;
-  border: 0;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(18px);
-  animation: a3payPushIn 220ms ease-out both;
-  cursor: pointer;
 }
 
-.a3pay-bank-push > span:last-child {
+.a3pay-rouble {
   display: grid;
+  width: 42px;
+  height: 41px;
+  place-items: center;
+  color: #145ceb;
+  border-radius: 13px;
+  background: #eaf1ff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.a3pay-payment-summary__top div {
+  display: grid;
+  flex: 1;
   min-width: 0;
   gap: 2px;
 }
 
-.a3pay-bank-push strong {
-  font-size: 15px;
-}
-
-.a3pay-bank-push small {
-  color: #344054;
+.a3pay-payment-summary__top strong {
   font-size: 14px;
-  font-weight: 800;
 }
 
-.a3pay-bank-push em {
-  overflow: hidden;
-  color: #667085;
-  font-size: 13px;
-  font-style: normal;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.a3pay-payment-summary__top small {
+  color: #7a8798;
+  font-size: 12px;
+  line-height: 1.28;
 }
 
-.a3pay-lockscreen__home {
-  position: absolute;
-  left: 50%;
-  bottom: 10px;
-  width: 132px;
-  height: 5px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
-  transform: translateX(-50%);
+.a3pay-payment-summary__top b {
+  flex: 0 0 108px;
+  font-size: 20px;
+  text-align: right;
 }
 
-.a3pay-bank-screen {
-  min-height: 100dvh;
-  align-content: start;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+.a3pay-divider {
+  height: 1px;
+  background: #eef2f7;
 }
 
-.a3pay-bank-screen__amount {
+.a3pay-phone-card {
   display: grid;
-  gap: 8px;
-  justify-items: center;
-  padding: 36px 12px;
-  border-radius: 28px;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #d9e1ec;
+  background: #fff;
+}
+
+.a3pay-mobile-spacer {
+  flex: 1;
+  min-height: 88px;
+}
+
+.a3pay-bottom-bar {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #eef2f7;
+  background: #fff;
+}
+
+.a3pay-bottom-bar > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.a3pay-bottom-bar span {
+  color: #7a8798;
+  font-size: 12px;
+}
+
+.a3pay-bottom-bar strong {
+  font-size: 17px;
+}
+
+.a3pay-client-primary,
+.a3pay-bottom-bar .a3-button,
+.a3pay-next-actions .a3-button {
+  width: 100%;
+}
+
+.a3pay-lockscreen-v4 {
+  position: relative;
+  gap: 18px;
+  padding: 22px 20px;
+  color: #101828;
   background: #f2f6ff;
 }
 
-.a3pay-bank-screen__amount span {
+.a3pay-lockscreen-v4__status {
+  display: flex;
+  justify-content: space-between;
+  color: #101828;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.a3pay-lockscreen-v4__time {
+  display: grid;
+  justify-items: center;
+  margin-top: 18px;
+  text-align: center;
+}
+
+.a3pay-lockscreen-v4__time strong {
+  font-size: 54px;
+  line-height: 1.28;
+}
+
+.a3pay-lockscreen-v4__time span,
+.a3pay-lockscreen-v4__hint {
   color: #667085;
   font-size: 14px;
   font-weight: 700;
 }
 
-.a3pay-bank-screen__amount strong {
-  color: #111827;
-  font-size: 42px;
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.a3pay-client-success {
-  min-height: 100dvh;
-  align-content: start;
-  justify-items: center;
-  text-align: center;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.a3pay-success-orb {
-  display: grid;
-  place-items: center;
-  width: 96px;
-  height: 96px;
-  margin-top: 92px;
-  color: #0f8a62;
-  border-radius: 32px;
-  background: #eafaf4;
-}
-
-.a3pay-client-success h1 {
-  margin: 8px 0 0;
-  font-size: 32px;
-  letter-spacing: -0.04em;
-}
-
-.a3pay-client-success p {
-  max-width: 300px;
+.a3pay-lockscreen-v4__hint {
   margin: 0;
-  color: #667085;
-  line-height: 1.5;
+  padding: 8px 15px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
 }
 
-.a3pay-merchant-page {
-  min-height: 100vh;
-  padding: 24px;
-  color: #0f172a;
-  background: #f4f7fb;
-}
-
-.a3pay-merchant-topbar {
+.a3pay-bank-push {
   display: flex;
   align-items: center;
-  gap: 18px;
-  max-width: 1180px;
-  margin: 0 auto 22px;
-  padding: 14px 18px;
-  border: 1px solid rgba(137, 150, 168, 0.24);
-  border-radius: 24px;
+  gap: 12px;
+  width: 100%;
+  min-height: 78px;
+  padding: 16px;
+  text-align: left;
+  color: #101828;
+  border: 0;
+  border-radius: 22px;
   background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 20px 60px rgba(16, 24, 40, 0.16);
+  cursor: pointer;
 }
 
-.a3pay-merchant-brand {
+.a3pay-bank-push__icon {
   display: grid;
+  width: 46px;
+  height: 46px;
   place-items: center;
-  width: 52px;
-  height: 52px;
   color: #fff;
-  border-radius: 18px;
-  background: #1262ff;
+  border-radius: 14px;
+  background: #145ceb;
   font-weight: 900;
 }
 
-.a3pay-merchant-topbar > div:not(.a3pay-merchant-brand) {
+.a3pay-bank-push > span:nth-child(2) {
   display: grid;
+  flex: 1;
+  min-width: 0;
   gap: 2px;
-  margin-right: auto;
 }
 
-.a3pay-merchant-topbar span {
+.a3pay-bank-push small,
+.a3pay-bank-push em {
   color: #667085;
   font-size: 13px;
+  font-style: normal;
 }
 
-.a3pay-merchant-topbar strong {
-  font-size: 18px;
+.a3pay-lockscreen-v4__home {
+  position: absolute;
+  right: 130px;
+  bottom: 22px;
+  left: 130px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.72);
 }
 
-.a3pay-merchant-layout {
+.a3pay-bank-hero,
+.a3pay-success-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
-  gap: 18px;
-  max-width: 1180px;
+  justify-items: center;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 18px;
+  background: #f8fafc;
+  text-align: center;
+}
+
+.a3pay-bank-hero span,
+.a3pay-bank-hero small,
+.a3pay-success-hero small,
+.a3pay-kv-card dt {
+  color: #7a8798;
+  font-size: 12px;
+}
+
+.a3pay-bank-hero strong {
+  font-size: 40px;
+  line-height: 1.28;
+}
+
+.a3pay-kv-card {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #eef2f7;
+  background: #fff;
+}
+
+.a3pay-kv-card div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.a3pay-kv-card div:last-child {
+  border-bottom: 0;
+}
+
+.a3pay-kv-card dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.a3pay-safety-note {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  color: #475467;
+  background: #fff4e5;
+  font-size: 12px;
+  line-height: 1.28;
+}
+
+.a3pay-success-hero span {
+  display: grid;
+  width: 54px;
+  height: 55px;
+  place-items: center;
+  color: #12b76a;
+  border-radius: 999px;
+  background: #eafbf3;
+}
+
+.a3pay-success-hero strong {
+  font-size: 24px;
+}
+
+.a3pay-next-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.a3pay-error-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #ffd6d1;
+  background: #fff1f0;
+}
+
+.a3pay-error-card span {
+  width: fit-content;
+  padding: 5px 8px;
+  color: #b42318;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.a3pay-error-card h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.08;
+}
+
+.a3pay-error-card p,
+.a3pay-merchant-note span {
+  margin: 0;
+  color: #475467;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.a3pay-merchant-note {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  background: #f8fafc;
+}
+
+.a3pay-merchant-branch {
+  min-height: 100dvh;
+  padding: 28px;
+  color: #111827;
+  background: #f4f7fb;
+}
+
+.a3pay-merchant-header,
+.a3pay-merchant-grid {
+  width: min(1180px, 100%);
   margin: 0 auto;
 }
 
-.a3pay-merchant-card {
+.a3pay-merchant-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.a3pay-merchant-header > div {
   display: grid;
+  max-width: 780px;
+  gap: 8px;
+}
+
+.a3pay-merchant-grid {
+  display: grid;
+  grid-template-columns: minmax(420px, 0.92fr) minmax(0, 1.28fr);
   gap: 18px;
+}
+
+.a3pay-merchant-panel {
+  display: grid;
   align-content: start;
-  padding: 22px;
-  border: 1px solid rgba(137, 150, 168, 0.24);
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid #eef2f7;
   border-radius: 28px;
   background: #fff;
   box-shadow: 0 18px 50px rgba(15, 23, 42, 0.07);
 }
 
-.a3pay-merchant-card--wide {
-  grid-row: span 2;
-}
-
-.a3pay-merchant-card h2 {
-  margin: 0;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-}
-
-.a3pay-merchant-title {
+.a3pay-merchant-panel__heading {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
+  gap: 16px;
 }
 
-.a3pay-merchant-title span {
-  color: #667085;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.a3pay-merchant-title h1 {
-  margin: 6px 0 0;
-  font-size: clamp(30px, 4vw, 44px);
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.a3pay-merchant-title > strong {
-  flex: 0 0 auto;
-  color: #1262ff;
+.a3pay-merchant-panel__heading h2 {
+  margin: 4px 0 0;
   font-size: 28px;
-  letter-spacing: -0.04em;
+  line-height: 1.08;
 }
 
-.a3pay-merchant-form {
+.a3pay-merchant-panel__heading > strong {
+  color: #145ceb;
+  font-size: 26px;
+}
+
+.a3pay-merchant-form-v4 {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.a3pay-merchant-form > :last-child {
+.a3pay-merchant-form-v4 > :last-child {
   grid-column: 1 / -1;
+}
+
+.a3pay-items-table,
+.a3pay-risk-card,
+.a3pay-merchant-rule-row section {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #eef2f7;
+  border-radius: 18px;
+  background: #f8fafc;
+}
+
+.a3pay-items-table span,
+.a3pay-risk-card span,
+.a3pay-merchant-rule-row span {
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 .a3pay-merchant-actions,
@@ -409,61 +587,57 @@
   gap: 10px;
 }
 
-.a3pay-status-panel {
-  display: flex;
-  gap: 14px;
-  padding: 16px;
-  color: #344054;
-  border-radius: 22px;
+.a3pay-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.a3pay-kpi {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 16px;
   background: #f8fafc;
 }
 
-.a3pay-status-panel__icon {
+.a3pay-kpi span {
+  color: #7a8798;
+  font-size: 12px;
+}
+
+.a3pay-kpi strong {
+  font-size: 20px;
+}
+
+.a3pay-status-table {
+  overflow: hidden;
+  border: 1px solid #eef2f7;
+  border-radius: 18px;
+}
+
+.a3pay-status-table__head,
+.a3pay-status-table__row {
   display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border-radius: 15px;
-  background: #fff;
+  grid-template-columns: 1fr 1.15fr 1.3fr 1.25fr 0.85fr;
+  gap: 12px;
+  align-items: center;
+  min-width: 760px;
+  padding: 14px 16px;
 }
 
-.a3pay-status-panel strong {
-  display: block;
-  margin-bottom: 3px;
+.a3pay-status-table__head {
+  color: #7a8798;
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
-.a3pay-status-panel p {
-  margin: 0;
-  color: #667085;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.a3pay-status-panel[data-tone="success"],
-.a3pay-status-badge[data-tone="success"],
-.a3pay-merchant-state--success {
-  color: #0f8a62;
-  background: #eafaf4;
-}
-
-.a3pay-status-panel[data-tone="error"],
-.a3pay-status-badge[data-tone="error"],
-.a3pay-merchant-state--error {
-  color: #b42318;
-  background: #fff1f0;
-}
-
-.a3pay-status-panel[data-tone="warning"],
-.a3pay-status-badge[data-tone="warning"] {
-  color: #b54708;
-  background: #fff7e6;
-}
-
-.a3pay-status-panel[data-tone="info"],
-.a3pay-status-badge[data-tone="info"] {
-  color: #1262ff;
-  background: #edf4ff;
+.a3pay-status-table__row {
+  border-top: 1px solid #eef2f7;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .a3pay-status-badge {
@@ -480,93 +654,45 @@
   white-space: nowrap;
 }
 
-.a3pay-merchant-state {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  padding: 22px;
-  text-align: center;
-  border-radius: 22px;
+.a3pay-status-badge[data-tone="success"],
+.a3pay-merchant-state--success {
+  color: #0f8a62;
+  background: #eafaf4;
 }
 
-.a3pay-merchant-state strong {
-  font-size: 18px;
+.a3pay-status-badge[data-tone="error"],
+.a3pay-merchant-state--error {
+  color: #b42318;
+  background: #fff1f0;
+}
+
+.a3pay-status-badge[data-tone="warning"] {
+  color: #b54708;
+  background: #fff4e5;
+}
+
+.a3pay-status-badge[data-tone="info"] {
+  color: #145ceb;
+  background: #eaf1ff;
+}
+
+.a3pay-merchant-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
 }
 
 .a3pay-merchant-state span {
-  max-width: 280px;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.a3pay-details-list {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-}
-
-.a3pay-details-list div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 12px 0;
-  border-bottom: 1px solid #eef2f6;
-}
-
-.a3pay-details-list div:last-child {
-  border-bottom: 0;
-}
-
-.a3pay-details-list dt {
-  color: #667085;
-}
-
-.a3pay-details-list dd {
-  margin: 0;
-  font-weight: 800;
-  text-align: right;
-}
-
-.a3pay-event-list {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.a3pay-event-list li {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
-  gap: 10px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eef2f6;
-}
-
-.a3pay-event-list li:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.a3pay-event-list span {
-  color: #98a2b3;
+  display: block;
   font-size: 13px;
-  font-weight: 800;
 }
 
-.a3pay-event-list p {
-  margin: 0;
-  color: #344054;
-  line-height: 1.35;
-}
-
-.a3pay-event-list li[data-tone="success"] p {
-  color: #0f8a62;
-}
-
-.a3pay-event-list li[data-tone="error"] p {
-  color: #b42318;
+.a3pay-merchant-rule-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .a3pay-spin {
@@ -579,53 +705,54 @@
   }
 }
 
-@keyframes a3payPushIn {
-  from {
-    opacity: 0;
-    transform: translateY(-12px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@media (max-width: 860px) {
-  .a3pay-merchant-page {
-    padding: 14px;
-  }
-
-  .a3pay-merchant-layout {
+@media (max-width: 980px) {
+  .a3pay-merchant-grid,
+  .a3pay-merchant-form-v4,
+  .a3pay-merchant-rule-row {
     grid-template-columns: 1fr;
   }
 
-  .a3pay-merchant-card--wide {
-    grid-row: auto;
-  }
-
-  .a3pay-merchant-title,
-  .a3pay-merchant-topbar {
+  .a3pay-merchant-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .a3pay-merchant-topbar > div:not(.a3pay-merchant-brand) {
-    margin-right: 0;
+  .a3pay-status-table {
+    overflow-x: auto;
   }
 }
 
 @media (max-width: 520px) {
-  .a3pay-client-app,
-  .a3pay-lockscreen {
+  .a3pay-mobile-branch,
+  .a3pay-merchant-branch,
+  .a3pay-hub {
+    padding: 0;
+  }
+
+  .a3pay-phone-frame {
     width: 100vw;
+    min-height: 100dvh;
+    padding: 0;
+    border-radius: 0;
   }
 
-  .a3pay-merchant-form {
+  .a3pay-phone-surface,
+  .a3pay-lockscreen-v4 {
+    width: 100vw;
+    min-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .a3pay-hub__panel,
+  .a3pay-merchant-panel {
+    border-radius: 0;
+  }
+
+  .a3pay-merchant-header {
+    padding: 22px;
+  }
+
+  .a3pay-kpi-row {
     grid-template-columns: 1fr;
-  }
-
-  .a3pay-merchant-actions > *,
-  .a3pay-merchant-mini-actions > * {
-    width: 100%;
   }
 }

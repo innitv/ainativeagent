@@ -15,11 +15,11 @@
 - `apps/frontend/vite.config.ts` только подключает `a3payDemoMockApi()`.
 - `tests/playwright/a3pay-demo.spec.ts` проверяет пользовательские сценарии, но лежит в общем каталоге Playwright-тестов проекта.
 
-## Маршруты
+## Ветки демо
 
-- `/a3pay-demo` — hub со ссылками.
-- `/a3pay-demo/pay/pay_91A0EF` — клиентский сценарий.
-- `/a3pay-demo/merchant/orders/pay_91A0EF` — мерчантский сценарий.
+- `/a3pay-demo` — hub со ссылками на две ветки.
+- `/a3pay-demo/pay/pay_91A0EF` — `A3Pay Demo MVP`, клиентская mobile-ветка из Figma v4.
+- `/a3pay-demo/merchant/orders/pay_91A0EF` — `A3Pay Demo MVP Merchant`, web-ветка мерчанта из Figma v4.
 
 ## Публичные ссылки после Vercel deploy
 

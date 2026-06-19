@@ -224,6 +224,49 @@
   background: #fff;
 }
 
+.a3pay-phone-card label {
+  color: #475467;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.28;
+}
+
+.a3pay-phone-card p {
+  margin: 0;
+  color: #7a8798;
+  font-size: 12px;
+  line-height: 1.28;
+}
+
+.a3pay-phone-input-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid #eef2f7;
+  border-radius: 13px;
+  background: #f8fafc;
+  color: #111827;
+  font-size: 16px;
+}
+
+.a3pay-phone-input-line span {
+  width: 28px;
+  font-weight: 700;
+}
+
+.a3pay-phone-input-line input {
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+}
+
 .a3pay-mobile-spacer {
   flex: 1;
   min-height: 88px;
@@ -250,6 +293,102 @@
 
 .a3pay-bottom-bar strong {
   font-size: 17px;
+}
+
+.a3pay-figma-button {
+  display: inline-flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: #145ceb;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.28;
+}
+
+.a3pay-figma-button:disabled {
+  cursor: default;
+  opacity: 0.68;
+}
+
+.a3pay-figma-button--outline {
+  color: #145ceb;
+  border: 1px solid #d9e1ec;
+  background: #fff;
+}
+
+.a3pay-push-status-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid #d9e1ec;
+  border-radius: 20px;
+  background: #fff;
+}
+
+.a3pay-push-status-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.a3pay-push-status-card__head > span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #fff;
+  border-radius: 999px;
+  background: #145ceb;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.a3pay-push-status-card__head div {
+  display: grid;
+  gap: 2px;
+}
+
+.a3pay-push-status-card__head strong {
+  font-size: 15px;
+}
+
+.a3pay-push-status-card__head small {
+  color: #475467;
+  font-size: 12px;
+}
+
+.a3pay-mobile-timeline {
+  display: grid;
+  gap: 8px;
+}
+
+.a3pay-mobile-timeline p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #475467;
+  font-size: 12px;
+  line-height: 1.28;
+}
+
+.a3pay-mobile-timeline span {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #12b76a;
+}
+
+.a3pay-mobile-timeline span[data-tone="warning"] {
+  background: #f79009;
 }
 
 .a3pay-client-primary,
@@ -363,6 +502,11 @@
   text-align: center;
 }
 
+.a3pay-bank-hero {
+  border-radius: 22px;
+  background: #005bff;
+}
+
 .a3pay-bank-hero span,
 .a3pay-bank-hero small,
 .a3pay-success-hero small,
@@ -371,9 +515,21 @@
   font-size: 12px;
 }
 
+.a3pay-bank-hero span {
+  color: #cfe0ff;
+  font-size: 13px;
+}
+
+.a3pay-bank-hero small {
+  color: #dce8ff;
+  font-size: 13px;
+}
+
 .a3pay-bank-hero strong {
+  color: #fff;
   font-size: 40px;
   line-height: 1.28;
+  letter-spacing: -0.8px;
 }
 
 .a3pay-kv-card {
@@ -482,8 +638,7 @@
 
 .a3pay-merchant-surfaces {
   display: grid;
-  grid-template-columns: 1180px 1180px;
-  grid-template-rows: auto auto;
+  grid-template-columns: 1180px 1180px 1180px;
   gap: 48px;
   width: max-content;
 }
@@ -502,12 +657,17 @@
 }
 
 .a3pay-merchant-screen--dashboard {
-  grid-column: 1;
+  grid-column: 3;
 }
 
-.a3pay-merchant-screen--detail {
+.a3pay-merchant-status-stack {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  display: grid;
+  gap: 28px;
+}
+
+.a3pay-merchant-screen--status {
+  min-height: 709px;
 }
 
 .a3pay-merchant-nav {
@@ -621,14 +781,33 @@
   background: #fff4e5;
 }
 
+.a3pay-merchant-status-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  color: #fff;
+  border-radius: 18px;
+  background: #f79009;
+  font-size: 24px;
+}
+
 .a3pay-merchant-status-card[data-tone="success"] {
   color: #0f8a62;
   background: #eafaf4;
 }
 
+.a3pay-merchant-status-card[data-tone="success"] .a3pay-merchant-status-icon {
+  background: #12b76a;
+}
+
 .a3pay-merchant-status-card[data-tone="error"] {
   color: #b42318;
   background: #fff1f0;
+}
+
+.a3pay-merchant-status-card[data-tone="error"] .a3pay-merchant-status-icon {
+  background: #d92d20;
 }
 
 .a3pay-merchant-status-card h2,
@@ -768,7 +947,7 @@
   }
 
   .a3pay-merchant-screen--dashboard,
-  .a3pay-merchant-screen--detail {
+  .a3pay-merchant-status-stack {
     grid-column: auto;
     grid-row: auto;
   }

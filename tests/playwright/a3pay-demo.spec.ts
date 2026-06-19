@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const orderId = "pay_91A0EF";
 
-test("client can complete the A3Pay push payment demo", async ({ page }) => {
+test("client can complete the A3Pay push payment flow", async ({ page }) => {
   await page.goto(`/a3pay-demo/pay/${orderId}`);
 
   await page.getByLabel("Телефон, привязанный к Ozon Bank").fill("+7 900 123-45-67");
@@ -27,7 +27,7 @@ test("merchant can see the client-not-found state", async ({ page }) => {
   await expect(page.getByText("Номер не связан с активным Ozon Bank.").first()).toBeVisible();
 });
 
-test("merchant and client routes share the same demo order state", async ({ context, page }) => {
+test("merchant and client routes share the same order state", async ({ context, page }) => {
   const merchant = page;
   const client = await context.newPage();
 

@@ -1,15 +1,11 @@
 import * as React from "react";
 import {
   Check,
-  ExternalLink,
-  Loader2,
   Search,
-  Send,
   ShieldCheck,
   Smartphone,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import "./a3pay-demo.css";
@@ -20,6 +16,7 @@ type DemoStatus =
   | "client_not_found"
   | "push_sent"
   | "push_received"
+  | "bank_launching"
   | "payment_opened"
   | "paid"
   | "expired";
@@ -46,6 +43,7 @@ type DemoPayment = {
 type DemoRole = "client" | "merchant";
 
 const DEFAULT_ORDER_ID = "pay_91A0EF";
+const ACTIVE_PHONE = "79001234567";
 const NOT_FOUND_PHONE = "79030000002";
 
 const statusCopy: Record<DemoStatus, { title: string; description: string; tone: DemoEvent["tone"] }> = {
@@ -72,6 +70,11 @@ const statusCopy: Record<DemoStatus, { title: string; description: string; tone:
   push_received: {
     title: "Push доставлен",
     description: "На клиентском телефоне показано банковское уведомление.",
+    tone: "info",
+  },
+  bank_launching: {
+    title: "Открываем Ozon Bank",
+    description: "Клиент перешёл в банковское приложение из push.",
     tone: "info",
   },
   payment_opened: {
@@ -277,21 +280,6 @@ function ClientBranch({
   const [phone, setPhone] = React.useState(payment.phone ? formatPhone(payment.phone) : "+7 900 123-45-67");
   const [phoneError, setPhoneError] = React.useState("");
 
-  React.useEffect(() => {
-    if (payment.status === "push_sent") {
-      const timer = window.setTimeout(() => {
-        updatePayment({
-          event: makeEvent("Push показан на экране клиента", "info"),
-          status: "push_received",
-        });
-      }, 1600);
-
-      return () => window.clearTimeout(timer);
-    }
-
-    return undefined;
-  }, [payment.status, updatePayment]);
-
   const requestPush = () => {
     const phoneForValidation = phone.startsWith("+7") ? phone : `+7 ${phone}`;
     if (!isValidPhone(phoneForValidation)) {
@@ -309,7 +297,7 @@ function ClientBranch({
     });
 
     window.setTimeout(() => {
-      if (normalized === NOT_FOUND_PHONE) {
+      if (normalized !== ACTIVE_PHONE) {
         updatePayment({
           event: makeEvent("Ozon Bank по номеру клиента не найден", "error"),
           phone: normalized,
@@ -330,7 +318,7 @@ function ClientBranch({
   const openBankPayment = () => {
     updatePayment({
       event: makeEvent("Клиент открыл оплату из push", "warning"),
-      status: "payment_opened",
+      status: "bank_launching",
     });
   };
 
@@ -342,11 +330,15 @@ function ClientBranch({
   };
 
   if (payment.status === "push_sent") {
-    return <PushStatusScreen payment={payment} />;
+    return <PushStatusScreen payment={payment} onOpen={openBankPayment} />;
   }
 
   if (payment.status === "push_received") {
-    return <LockScreen payment={payment} onOpen={openBankPayment} />;
+    return <PushStatusScreen payment={payment} onOpen={openBankPayment} />;
+  }
+
+  if (payment.status === "bank_launching") {
+    return <BankLaunchScreen updatePayment={updatePayment} />;
   }
 
   if (payment.status === "payment_opened") {
@@ -364,7 +356,7 @@ function ClientBranch({
         <p className="a3pay-mobile-note">Fallback без тупика: поправить номер или перейти на QR/link.</p>
         <section className="a3pay-error-card">
           <span>номер не найден</span>
-          <h2>Мы не нашли активный Ozon Bank для этого телефона</h2>
+          <h2>Мы не нашли активный аккаунт Ozon Bank для этого телефона</h2>
           <p>Проверьте телефон или выберите QR/link. Деньги не списаны, запрос в банк не ушёл.</p>
         </section>
         <button className="a3pay-figma-button" type="button" onClick={reset}>
@@ -388,7 +380,7 @@ function ClientBranch({
             disabled={payment.status === "checking_phone"}
             inputMode="tel"
             onChange={(event) => setPhone(event.target.value)}
-            value={phone.replace(/^\\+7\\s*/, "")}
+            value={phone.replace(/^\+7\s*/, "")}
           />
         </div>
         <p>{phoneError || "Мы отправим push в Ozon Bank. Деньги спишутся только после подтверждения в банке."}</p>
@@ -416,13 +408,34 @@ function ClientShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="a3pay-mobile-branch" aria-label="A3Pay">
       <section className="a3pay-phone-surface">
+        <MobileStatusBar />
         {children}
       </section>
     </main>
   );
 }
 
-function PushStatusScreen({ payment }: { payment: DemoPayment }) {
+function MobileStatusBar() {
+  return (
+    <div className="a3pay-ios-statusbar" aria-label="Статус устройства">
+      <strong>18:42</strong>
+      <div>
+        <span className="a3pay-ios-signal"><i /><i /><i /><i /></span>
+        <span>5G</span>
+        <span className="a3pay-ios-battery"><i /></span>
+      </div>
+    </div>
+  );
+}
+
+function PushStatusScreen({ onOpen, payment }: { onOpen: () => void; payment: DemoPayment }) {
+  const [notificationVisible, setNotificationVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => setNotificationVisible(true), 1800);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <ClientShell>
       <h1>Push отправлен</h1>
@@ -442,6 +455,20 @@ function PushStatusScreen({ payment }: { payment: DemoPayment }) {
           <p><span data-tone="warning" />Ожидаем подтверждение в Ozon Bank</p>
         </div>
       </section>
+      <button
+        className="a3pay-ios-notification"
+        data-visible={notificationVisible}
+        onClick={onOpen}
+        type="button"
+      >
+        <span className="a3pay-ios-notification__icon">O</span>
+        <span>
+          <strong>Ozon Bank</strong>
+          <small>Подтвердите оплату A3Pay</small>
+          <em>{formatMoney(payment.amount)} · {payment.merchantName}</em>
+        </span>
+        <b>сейчас</b>
+      </button>
     </ClientShell>
   );
 }
@@ -463,31 +490,30 @@ function PaymentSummary({ payment }: { payment: DemoPayment }) {
   );
 }
 
-function LockScreen({ onOpen, payment }: { onOpen: () => void; payment: DemoPayment }) {
+function BankLaunchScreen({
+  updatePayment,
+}: {
+  updatePayment: (patch: Partial<DemoPayment> & { event?: DemoEvent }) => void;
+}) {
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      updatePayment({
+        event: makeEvent("Ozon Bank открыл экран подтверждения", "info"),
+        status: "payment_opened",
+      });
+    }, 1400);
+
+    return () => window.clearTimeout(timer);
+  }, [updatePayment]);
+
   return (
-    <main className="a3pay-mobile-branch" aria-label="A3Pay">
-      <section className="a3pay-lockscreen-v4">
-        <div className="a3pay-lockscreen-v4__status">
-          <span>18:42</span>
-          <span>5G 100%</span>
-        </div>
-        <div className="a3pay-lockscreen-v4__time">
-          <strong>18:42</strong>
-          <span>пятница, 19 июня</span>
-        </div>
-        <p className="a3pay-lockscreen-v4__hint">A3Pay ожидает подтверждение в банке</p>
-        <button className="a3pay-bank-push" type="button" onClick={onOpen}>
-          <span className="a3pay-bank-push__icon">O</span>
-          <span>
-            <strong>Ozon Bank</strong>
-            <small>Запрос на оплату A3Pay</small>
-            <em>{formatMoney(payment.amount)} · {payment.merchantName}</em>
-          </span>
-          <ExternalLink size={18} />
-        </button>
-        <div className="a3pay-lockscreen-v4__home" />
+    <ClientShell>
+      <section className="a3pay-bank-launch" aria-label="Открывается Ozon Bank">
+        <span>O</span>
+        <strong>Ozon Bank</strong>
+        <div><i /></div>
       </section>
-    </main>
+    </ClientShell>
   );
 }
 
@@ -577,6 +603,7 @@ function MerchantBranch({
   payment: DemoPayment;
   updatePayment: (patch: Partial<DemoPayment> & { event?: DemoEvent }) => void;
 }) {
+  const [view, setView] = React.useState<"create" | "payment" | "registry">("create");
   const [phone, setPhone] = React.useState(payment.phone ? formatPhone(payment.phone) : "+7 900 123-45-67");
   const [phoneError, setPhoneError] = React.useState("");
 
@@ -588,6 +615,7 @@ function MerchantBranch({
 
     const normalized = normalizePhone(phone);
     setPhoneError("");
+    setView("payment");
 
     updatePayment({
       event: makeEvent(`Мерчант проверяет номер ${formatPhone(phone)}`, "info"),
@@ -614,22 +642,44 @@ function MerchantBranch({
     }, 700);
   };
 
+  const setMerchantStatus = (status: "push_sent" | "client_not_found" | "paid") => {
+    const eventCopy = {
+      client_not_found: makeEvent("Клиент не найден по номеру телефона", "error"),
+      paid: makeEvent("Ozon Bank подтвердил списание", "success"),
+      push_sent: makeEvent("Push отправлен клиенту", "info"),
+    }[status];
+
+    updatePayment({ event: eventCopy, status });
+  };
+
   return (
     <main className="a3pay-merchant-product" aria-label="A3Pay Merchant">
       <section className="a3pay-merchant-surfaces">
-        <MerchantCreateSurface
-          payment={payment}
-          phone={phone}
-          phoneError={phoneError}
-          onPhoneChange={setPhone}
-          onSubmit={checkAndSendPush}
-        />
-        <div className="a3pay-merchant-status-stack">
-          <MerchantStatusSurface payment={payment} variant="push_sent" />
-          <MerchantStatusSurface payment={payment} variant="phone_not_found" />
-          <MerchantStatusSurface payment={payment} variant="paid" />
-        </div>
-        <MerchantDashboardSurface payment={payment} />
+        {view === "create" ? (
+          <MerchantCreateSurface
+            payment={payment}
+            phone={phone}
+            phoneError={phoneError}
+            onPhoneChange={setPhone}
+            onOpenRegistry={() => setView("registry")}
+            onSubmit={checkAndSendPush}
+          />
+        ) : null}
+        {view === "payment" ? (
+          <MerchantStatusSurface
+            payment={payment}
+            onCreate={() => setView("create")}
+            onOpenRegistry={() => setView("registry")}
+            onStatusChange={setMerchantStatus}
+          />
+        ) : null}
+        {view === "registry" ? (
+          <MerchantDashboardSurface
+            payment={payment}
+            onCreate={() => setView("create")}
+            onOpenPayment={() => setView("payment")}
+          />
+        ) : null}
       </section>
     </main>
   );
@@ -637,12 +687,14 @@ function MerchantBranch({
 
 function MerchantCreateSurface({
   onPhoneChange,
+  onOpenRegistry,
   onSubmit,
   payment,
   phone,
   phoneError,
 }: {
   onPhoneChange: (value: string) => void;
+  onOpenRegistry: () => void;
   onSubmit: () => void;
   payment: DemoPayment;
   phone: string;
@@ -650,7 +702,7 @@ function MerchantCreateSurface({
 }) {
   return (
     <article className="a3pay-merchant-screen a3pay-merchant-screen--create">
-      <MerchantTopNav />
+      <MerchantTopNav onOpenRegistry={onOpenRegistry} />
       <header className="a3pay-merchant-screen-header">
         <h1>Создать платёж A3Pay</h1>
         <p>Мерчант создаёт запрос: сумма, заказ, телефон клиента, fallback ссылка.</p>
@@ -675,14 +727,14 @@ function MerchantCreateSurface({
             value={phone}
           />
           <MerchantField label="Сколько активен запрос" value="20 мин" />
-          <Button
+          <button
+            className="a3pay-merchant-submit"
             disabled={payment.status === "checking_phone" || payment.status === "paid"}
-            leadingIcon={payment.status === "checking_phone" ? <Loader2 className="a3pay-spin" size={18} /> : <Send size={18} />}
             onClick={onSubmit}
-            size="l"
+            type="button"
           >
             {payment.status === "checking_phone" ? "Проверяем клиента" : "Создать запрос на оплату и отправить push в Ozon банк"}
-          </Button>
+          </button>
         </section>
       </div>
     </article>
@@ -690,12 +742,17 @@ function MerchantCreateSurface({
 }
 
 function MerchantStatusSurface({
+  onCreate,
+  onOpenRegistry,
+  onStatusChange,
   payment,
-  variant,
 }: {
+  onCreate: () => void;
+  onOpenRegistry: () => void;
+  onStatusChange: (status: "push_sent" | "client_not_found" | "paid") => void;
   payment: DemoPayment;
-  variant: "push_sent" | "phone_not_found" | "paid";
 }) {
+  const variant = payment.status === "client_not_found" ? "phone_not_found" : payment.status === "paid" ? "paid" : "push_sent";
   const copy = {
     push_sent: {
       chip: "ожидает клиента",
@@ -722,7 +779,7 @@ function MerchantStatusSurface({
 
   return (
     <article className="a3pay-merchant-screen a3pay-merchant-screen--status">
-      <MerchantTopNav />
+      <MerchantTopNav onCreate={onCreate} onOpenRegistry={onOpenRegistry} />
       <header className="a3pay-merchant-screen-header">
         <span>Реестр платежей / {payment.id}</span>
         <h1>Платёж {payment.id}</h1>
@@ -750,14 +807,36 @@ function MerchantStatusSurface({
           </div>
         ))}
       </section>
+      <section className="a3pay-status-switcher" aria-label="Переключить статус платежа">
+        <span>Показать состояние</span>
+        <div>
+          <button data-active={variant === "push_sent"} onClick={() => onStatusChange("push_sent")} type="button">
+            Push отправлен
+          </button>
+          <button data-active={variant === "phone_not_found"} onClick={() => onStatusChange("client_not_found")} type="button">
+            Клиент не найден
+          </button>
+          <button data-active={variant === "paid"} onClick={() => onStatusChange("paid")} type="button">
+            Оплачено
+          </button>
+        </div>
+      </section>
     </article>
   );
 }
 
-function MerchantDashboardSurface({ payment }: { payment: DemoPayment }) {
+function MerchantDashboardSurface({
+  onCreate,
+  onOpenPayment,
+  payment,
+}: {
+  onCreate: () => void;
+  onOpenPayment: () => void;
+  payment: DemoPayment;
+}) {
   return (
     <article className="a3pay-merchant-screen a3pay-merchant-screen--dashboard">
-      <MerchantTopNav />
+      <MerchantTopNav onCreate={onCreate} />
       <header className="a3pay-merchant-screen-header">
         <h1>Операции A3Pay</h1>
         <p>Реестр платежей показывает статус клиента, push и webhook без ручной сверки с банком.</p>
@@ -789,6 +868,7 @@ function MerchantDashboardSurface({ payment }: { payment: DemoPayment }) {
           client={payment.phone ? maskPhone(payment.phone) : "+7 900 ••-45-67"}
           event={statusCopy[payment.status].description}
           id={payment.id}
+          onOpen={onOpenPayment}
           status={getTableStatus(payment.status)}
         />
         <PaymentRow action="Открыть" amount="8 200 ₽" client="+7 911 ••-22-10" event="Ожидаем подтверждение клиента" id="pay_91A0EE" status="push_sent" />
@@ -799,11 +879,21 @@ function MerchantDashboardSurface({ payment }: { payment: DemoPayment }) {
   );
 }
 
-function MerchantTopNav() {
+function MerchantTopNav({
+  onCreate,
+  onOpenRegistry,
+}: {
+  onCreate?: () => void;
+  onOpenRegistry?: () => void;
+}) {
   return (
     <nav className="a3pay-merchant-nav">
       <strong>A3Pay merchant</strong>
-      <span>MVP / Ozon Bank only</span>
+      <div className="a3pay-merchant-nav__actions">
+        <span>MVP / Ozon Bank only</span>
+        {onCreate ? <button onClick={onCreate} type="button">Создать платёж</button> : null}
+        {onOpenRegistry ? <button onClick={onOpenRegistry} type="button">Реестр платежей</button> : null}
+      </div>
     </nav>
   );
 }
@@ -833,6 +923,7 @@ function PaymentRow({
   client,
   event,
   id,
+  onOpen,
   status,
 }: {
   action: string;
@@ -840,6 +931,7 @@ function PaymentRow({
   client: string;
   event: string;
   id: string;
+  onOpen?: () => void;
   status: string;
 }) {
   return (
@@ -849,7 +941,7 @@ function PaymentRow({
       <span>{amount}</span>
       <span className="a3pay-table-chip">{status}</span>
       <span>{event}</span>
-      <strong>{action}</strong>
+      {onOpen ? <button className="a3pay-table-action" onClick={onOpen} type="button">{action}</button> : <strong>{action}</strong>}
     </div>
   );
 }

@@ -4,7 +4,7 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/a3pay-demo",
+      "destination": "/a3pay-demo/pay/pay_91A0EF",
       "permanent": false
     }
   ],

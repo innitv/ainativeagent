@@ -21,6 +21,16 @@
 - `/a3pay-demo/pay/pay_91A0EF` — клиентский сценарий.
 - `/a3pay-demo/merchant/orders/pay_91A0EF` — мерчантский сценарий.
 
+## Публичные ссылки после Vercel deploy
+
+После деплоя на Vercel замени домен на домен проекта:
+
+- `https://<vercel-domain>/a3pay-demo` — hub для демонстрации двух ролей.
+- `https://<vercel-domain>/a3pay-demo/pay/pay_91A0EF` — ссылка для клиента.
+- `https://<vercel-domain>/a3pay-demo/merchant/orders/pay_91A0EF` — ссылка для мерчанта.
+
+`vercel.json` в корне проекта направляет все route-paths в `index.html`, поэтому прямые ссылки на роли не должны падать в 404.
+
 ## Тестовые номера
 
 - `+7 900 123-45-67` — успешный сценарий.

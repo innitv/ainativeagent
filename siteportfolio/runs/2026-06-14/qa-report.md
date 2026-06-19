@@ -36,7 +36,7 @@ http://127.0.0.1:5177/portfolio/a3/case/dashboard-redesign
 DOM checks confirmed:
 
 - companies present on home: А3, Ростелеком, Самолет;
-- A3 page includes cases: Редизайн главного экрана, Оптимизация флоу, Дизайн-система;
+- A3 page includes cases: Редизайн главной, Оптимизация флоу, Дизайн-система;
 - case page includes article sections: Контекст, Проблема, Решение, Результат.
 
 ## Issues Found And Fixed

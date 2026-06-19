@@ -1,6 +1,13 @@
 {
   "buildCommand": "yarn build",
   "outputDirectory": "dist/frontend",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/a3pay-demo",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
